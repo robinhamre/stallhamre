@@ -30,6 +30,21 @@ export default defineType({
       type: 'number', // f.eks. 2020
     }),
 
+    // Kjønn
+    defineField({
+      name: 'gender',
+      title: 'Kjønn',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Hingst', value: 'hingst'},
+          {title: 'Hoppe', value: 'hoppe'},
+          {title: 'Vallak', value: 'vallak'},
+        ],
+        layout: 'radio', // eller 'dropdown' hvis du foretrekker meny
+      },
+    }),
+
     // Fødeland
     defineField({
       name: 'birthCountry',
@@ -43,9 +58,38 @@ export default defineType({
       type: 'string',
     }),
 
+    // Oppdretter (etter Eier)
+    defineField({
+      name: 'breeder',
+      title: 'Oppdretter',
+      type: 'string',
+    }),
+
+    // Stamme (fri tekst hvis du vil samle alt)
     defineField({
       name: 'pedigree',
       title: 'Stamme',
+      type: 'string',
+    }),
+
+    // Mor (etter Stamme)
+    defineField({
+      name: 'dam',
+      title: 'Mor',
+      type: 'string',
+    }),
+
+    // Far
+    defineField({
+      name: 'sire',
+      title: 'Far',
+      type: 'string',
+    }),
+
+    // Morfar
+    defineField({
+      name: 'damsire',
+      title: 'Morfar',
       type: 'string',
     }),
 
