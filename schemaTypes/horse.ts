@@ -14,6 +14,21 @@ export default defineType({
     }),
 
     defineField({
+      name: 'status',
+      title: 'Status',
+      type: 'string',
+      initialValue: 'active',
+      options: {
+        list: [
+          {title: 'Aktiv', value: 'active'},
+          {title: 'Ikke aktiv', value: 'inactive'},
+        ],
+        layout: 'radio',
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+
+    defineField({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
@@ -104,6 +119,31 @@ export default defineType({
           title: 'Bildetekst',
           type: 'string',
         }),
+
+    defineField({
+      name: 'gallery',
+      title: 'Bildegalleri',
+      type: 'array',
+      of: [
+        {
+          type: 'image',
+          options: {hotspot: true},
+          fields: [
+            {
+              name: 'alt',
+              title: 'Alt-tekst',
+              type: 'string',
+              description: 'Kort beskrivelse for universell utforming og SEO',
+            },
+            {
+              name: 'caption',
+              title: 'Bildetekst',
+              type: 'string',
+            },
+          ],
+        },
+      ],
+    }),
         defineField({
           name: 'alt',
           title: 'Alt-tekst (for skjermleser)',
