@@ -14,13 +14,13 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
 
-    // Slug / nøkkel (brukes til /nyheter/slug)
+    // Slug
     defineField({
       name: 'slug',
-      title: 'Slug / nøkkel',
+      title: 'Slug',
       type: 'slug',
       options: {
-        source: 'title', // lager forslag basert på overskrift
+        source: 'title',
         maxLength: 96,
       },
       validation: (Rule) => Rule.required(),
@@ -32,7 +32,6 @@ export default defineType({
       title: 'Publiseringsdato',
       type: 'date',
       options: {
-        // bare for visning i Studio – på nettsiden kan vi formatere som vi vil
         dateFormat: 'DD.MM.YYYY',
       },
     }),
@@ -45,7 +44,7 @@ export default defineType({
       rows: 3,
     }),
 
-    // Kategorier (fra egen Kategori-type)
+    // Kategorier
     defineField({
       name: 'categories',
       title: 'Kategorier',
@@ -55,26 +54,6 @@ export default defineType({
           type: 'reference',
           to: [{type: 'category'}],
         },
-      ],
-    }),
-
-    // Bilde 1 + bildetekst – LØFTET OPP over Tekstboks 1
-    defineField({
-      name: 'image1',
-      title: 'Bilde 1',
-      type: 'image',
-      options: {hotspot: true},
-      fields: [
-        defineField({
-          name: 'caption',
-          title: 'Bildetekst',
-          type: 'string',
-        }),
-        defineField({
-          name: 'alt',
-          title: 'Alt-tekst (for skjermleser)',
-          type: 'string',
-        }),
       ],
     }),
 
@@ -94,6 +73,18 @@ export default defineType({
       rows: 2,
     }),
 
+    // Bilde 1
+    defineField({
+      name: 'image1',
+      title: 'Bilde 1',
+      type: 'image',
+      options: {hotspot: true},
+      fields: [
+        {name: 'caption', title: 'Bildetekst', type: 'string'},
+        {name: 'alt', title: 'Alt-tekst', type: 'string'},
+      ],
+    }),
+
     // Tekstboks 2
     defineField({
       name: 'textBlock2',
@@ -102,93 +93,27 @@ export default defineType({
       of: [{type: 'block'}],
     }),
 
-    // Bilde 2 + bildetekst
+    // Bilde 2
     defineField({
       name: 'image2',
       title: 'Bilde 2',
       type: 'image',
       options: {hotspot: true},
       fields: [
-        defineField({
-          name: 'caption',
-          title: 'Bildetekst',
-          type: 'string',
-        }),
-        defineField({
-          name: 'alt',
-          title: 'Alt-tekst (for skjermleser)',
-          type: 'string',
-        }),
+        {name: 'caption', title: 'Bildetekst', type: 'string'},
+        {name: 'alt', title: 'Alt-tekst', type: 'string'},
       ],
     }),
 
-    // Faktaboks (rik tekst)
+    // Faktaboks (ligger fast – ikke flyttes)
     defineField({
       name: 'factBox',
       title: 'Faktaboks',
-      description: 'Kort faktatekst som kan vises som egen boks i artikkelen.',
       type: 'array',
       of: [{type: 'block'}],
     }),
 
-    // Galleri – serie med bilder
-    defineField({
-      name: 'gallery',
-      title: 'Galleri',
-      description: 'Valgfritt bildegalleri til artikkelen.',
-      type: 'array',
-      of: [
-        {
-          type: 'image',
-          options: {hotspot: true},
-          fields: [
-            defineField({
-              name: 'caption',
-              title: 'Bildetekst',
-              type: 'string',
-            }),
-            defineField({
-              name: 'alt',
-              title: 'Alt-tekst (for skjermleser)',
-              type: 'string',
-            }),
-          ],
-        },
-      ],
-    }),
-
-    // Video – lenke til YouTube/Vimeo ELLER lokal videofil
-    defineField({
-      name: 'video',
-      title: 'Video',
-      type: 'object',
-      fields: [
-        defineField({
-          name: 'url',
-          title: 'YouTube / Vimeo-lenke',
-          type: 'url',
-          validation: (Rule) =>
-            Rule.uri({
-              allowRelative: false,
-              scheme: ['http', 'https'],
-            }),
-        }),
-        defineField({
-          name: 'file',
-          title: 'Lokal videofil (valgfritt)',
-          type: 'file',
-          options: {
-            accept: 'video/*',
-          },
-        }),
-      ],
-      options: {
-        collapsible: true,
-        collapsed: true,
-      },
-    }),
-
-    // Tekstboks 3 – SKAL VÆRE SIST av tekstboksene
+    // Tekstboks 3 (siste tekst)
     defineField({
       name: 'textBlock3',
       title: 'Tekstboks 3',
@@ -196,11 +121,11 @@ export default defineType({
       of: [{type: 'block'}],
     }),
 
-    // Starter / tabell (mange rader, 4 kolonner)
+    // STARTER / TABELL
     defineField({
       name: 'raceTable',
       title: 'Starter (tabell)',
-      description: 'Dato, hest, kusk og bane. Legg til så mange rader du vil.',
+      description: 'Dato, løp nr, hest, kusk og bane.',
       type: 'array',
       of: [
         {
@@ -211,12 +136,20 @@ export default defineType({
             {
               name: 'date',
               title: 'Dato',
-              type: 'string', // f.eks. 05.12.2025
+              type: 'string',
+              description: 'F.eks. 05.12.2025',
+            },
+            {
+              name: 'raceNumber',
+              title: 'Løp nr',
+              type: 'string',
+              description: 'F.eks. 5',
             },
             {
               name: 'horse',
               title: 'Hest',
-              type: 'string',
+              type: 'reference',
+              to: [{type: 'horse'}],
             },
             {
               name: 'driver',
@@ -233,10 +166,10 @@ export default defineType({
       ],
     }),
 
-    // Skulte tags
+    // Skjulte tags
     defineField({
       name: 'hiddenTags',
-      title: 'Skulte tags',
+      title: 'Skjulte tags',
       type: 'array',
       of: [{type: 'string'}],
       options: {
