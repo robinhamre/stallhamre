@@ -6,15 +6,13 @@ export default defineType({
   title: 'Innlegg',
   type: 'document',
   fields: [
-    // Overskrift
     defineField({
       name: 'title',
       title: 'Overskrift',
       type: 'string',
-      validation: (Rule) => Rule.required(),
+      validation: Rule => Rule.required(),
     }),
 
-    // Slug
     defineField({
       name: 'slug',
       title: 'Slug',
@@ -23,20 +21,14 @@ export default defineType({
         source: 'title',
         maxLength: 96,
       },
-      validation: (Rule) => Rule.required(),
     }),
 
-    // Publiseringsdato
     defineField({
       name: 'publishedAt',
       title: 'Publiseringsdato',
       type: 'date',
-      options: {
-        dateFormat: 'DD.MM.YYYY',
-      },
     }),
 
-    // Ingress
     defineField({
       name: 'ingress',
       title: 'Ingress',
@@ -44,7 +36,6 @@ export default defineType({
       rows: 3,
     }),
 
-    // Kategorier
     defineField({
       name: 'categories',
       title: 'Kategorier',
@@ -57,7 +48,6 @@ export default defineType({
       ],
     }),
 
-    // Tekstboks 1
     defineField({
       name: 'textBlock1',
       title: 'Tekstboks 1',
@@ -65,7 +55,6 @@ export default defineType({
       of: [{type: 'block'}],
     }),
 
-    // Sitat
     defineField({
       name: 'quote',
       title: 'Sitat',
@@ -73,7 +62,6 @@ export default defineType({
       rows: 2,
     }),
 
-    // Bilde 1
     defineField({
       name: 'image1',
       title: 'Bilde 1',
@@ -85,7 +73,6 @@ export default defineType({
       ],
     }),
 
-    // Tekstboks 2
     defineField({
       name: 'textBlock2',
       title: 'Tekstboks 2',
@@ -93,7 +80,6 @@ export default defineType({
       of: [{type: 'block'}],
     }),
 
-    // Bilde 2
     defineField({
       name: 'image2',
       title: 'Bilde 2',
@@ -105,7 +91,6 @@ export default defineType({
       ],
     }),
 
-    // Faktaboks (ligger fast – ikke flyttes)
     defineField({
       name: 'factBox',
       title: 'Faktaboks',
@@ -113,7 +98,6 @@ export default defineType({
       of: [{type: 'block'}],
     }),
 
-    // Tekstboks 3 (siste tekst)
     defineField({
       name: 'textBlock3',
       title: 'Tekstboks 3',
@@ -121,11 +105,11 @@ export default defineType({
       of: [{type: 'block'}],
     }),
 
-    // STARTER / TABELL
+    // ⭐ STARTER-TABELL (OPPDATERT)
     defineField({
       name: 'raceTable',
       title: 'Starter (tabell)',
-      description: 'Dato, løp nr, hest, kusk og bane.',
+      description: 'Dato, løp, hest, kusk og travbane',
       type: 'array',
       of: [
         {
@@ -136,14 +120,12 @@ export default defineType({
             {
               name: 'date',
               title: 'Dato',
-              type: 'string',
-              description: 'F.eks. 05.12.2025',
+              type: 'date',
             },
             {
               name: 'raceNumber',
               title: 'Løp nr',
-              type: 'string',
-              description: 'F.eks. 5',
+              type: 'number',
             },
             {
               name: 'horse',
@@ -154,22 +136,23 @@ export default defineType({
             {
               name: 'driver',
               title: 'Kusk',
-              type: 'string',
+              type: 'reference',
+              to: [{type: 'driver'}],
             },
             {
               name: 'track',
-              title: 'Bane',
-              type: 'string',
+              title: 'Travbane',
+              type: 'reference',
+              to: [{type: 'track'}],
             },
           ],
         },
       ],
     }),
 
-    // Skjulte tags
     defineField({
       name: 'hiddenTags',
-      title: 'Skjulte tags',
+      title: 'Skulte tags',
       type: 'array',
       of: [{type: 'string'}],
       options: {
