@@ -6,7 +6,6 @@ export default defineType({
   title: 'Tips',
   type: 'document',
   fields: [
-    // Overskrift
     defineField({
       name: 'title',
       title: 'Overskrift',
@@ -14,62 +13,6 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
 
-    // Bilde
-    defineField({
-      name: 'image',
-      title: 'Bilde',
-      type: 'image',
-      options: {hotspot: true},
-      fields: [
-        defineField({
-          name: 'caption',
-          title: 'Bildetekst',
-          type: 'string',
-        }),
-        defineField({
-          name: 'alt',
-          title: 'Alt-tekst (for skjermleser)',
-          type: 'string',
-        }),
-      ],
-    }),
-
-    // Video-lenke (brukes i stedet for bilde hvis satt)
-    defineField({
-      name: 'videoUrl',
-      title: 'Video (lenke)',
-      type: 'url',
-      description: 'Hvis du fyller inn video-lenke her, skal videoen vises i stedet for bildet.',
-      validation: (Rule) =>
-        Rule.uri({
-          allowRelative: false,
-          scheme: ['http', 'https'],
-        }),
-    }),
-
-    // Kategori (egen tips-kategori)
-    defineField({
-      name: 'category',
-      title: 'Kategori',
-      type: 'reference',
-      to: [{type: 'tipsCategory'}],
-    }),
-
-    // Travbane
-    defineField({
-      name: 'track',
-      title: 'Travbane',
-      type: 'string', // f.eks. "Bjerke Travbane"
-    }),
-
-    // Spillform
-    defineField({
-      name: 'gameType',
-      title: 'Spillform',
-      type: 'string', // f.eks. "V75", "V65", "DD"
-    }),
-
-    // Publiseringsdato
     defineField({
       name: 'publishedAt',
       title: 'Publiseringsdato',
@@ -79,7 +22,25 @@ export default defineType({
       },
     }),
 
-    // Ingress
+    defineField({
+      name: 'category',
+      title: 'Kategori',
+      type: 'reference',
+      to: [{type: 'tipsCategory'}],
+    }),
+
+    defineField({
+      name: 'track',
+      title: 'Travbane',
+      type: 'string',
+    }),
+
+    defineField({
+      name: 'betType',
+      title: 'Spillform',
+      type: 'string',
+    }),
+
     defineField({
       name: 'ingress',
       title: 'Ingress',
@@ -87,16 +48,60 @@ export default defineType({
       rows: 3,
     }),
 
-    // Link til ekstern sak
     defineField({
       name: 'link',
-      title: 'Link til saken',
+      title: 'Link (lenke til annen sak)',
       type: 'url',
       validation: (Rule) =>
         Rule.uri({
           allowRelative: false,
           scheme: ['http', 'https'],
         }),
+    }),
+
+    // Hest + startkommentar (tabell)
+    defineField({
+      name: 'starts',
+      title: 'Starter / vurderinger',
+      description: 'Velg hest fra treningslisten og skriv startkommentar.',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          name: 'startRow',
+          title: 'Rad',
+          fields: [
+            defineField({
+              name: 'horse',
+              title: 'Hest',
+              type: 'reference',
+              to: [{type: 'horse'}],
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'comment',
+              title: 'Startkommentar',
+              type: 'text',
+              rows: 3,
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: {
+            select: {
+              title: 'horse.name',
+              subtitle: 'comment',
+            },
+          },
+        },
+      ],
+    }),
+
+    // Eventuell brødtekst
+    defineField({
+      name: 'content',
+      title: 'Tekst',
+      type: 'array',
+      of: [{type: 'block'}],
     }),
   ],
 })
