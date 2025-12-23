@@ -1,4 +1,3 @@
-// schemaTypes/tips.ts
 import {defineField, defineType} from 'sanity'
 
 export default defineType({
@@ -10,16 +9,20 @@ export default defineType({
       name: 'title',
       title: 'Overskrift',
       type: 'string',
-      validation: (Rule) => Rule.required(),
+      validation: Rule => Rule.required(),
     }),
 
     defineField({
       name: 'publishedAt',
       title: 'Publiseringsdato',
       type: 'date',
-      options: {
-        dateFormat: 'DD.MM.YYYY',
-      },
+    }),
+
+    defineField({
+      name: 'image',
+      title: 'Bilde',
+      type: 'image',
+      options: {hotspot: true},
     }),
 
     defineField({
@@ -29,16 +32,20 @@ export default defineType({
       to: [{type: 'tipsCategory'}],
     }),
 
+    // 🔁 ENDRET: Spillform → Forfatter
+    defineField({
+      name: 'author',
+      title: 'Forfatter',
+      type: 'string',
+      initialValue: 'Jokersystemet.no',
+    }),
+
+    // 🆕 NY: Travbane
     defineField({
       name: 'track',
       title: 'Travbane',
-      type: 'string',
-    }),
-
-    defineField({
-      name: 'betType',
-      title: 'Spillform',
-      type: 'string',
+      type: 'reference',
+      to: [{type: 'track'}],
     }),
 
     defineField({
@@ -49,59 +56,16 @@ export default defineType({
     }),
 
     defineField({
-      name: 'link',
-      title: 'Link (lenke til annen sak)',
-      type: 'url',
-      validation: (Rule) =>
-        Rule.uri({
-          allowRelative: false,
-          scheme: ['http', 'https'],
-        }),
-    }),
-
-    // Hest + startkommentar (tabell)
-    defineField({
-      name: 'starts',
-      title: 'Starter / vurderinger',
-      description: 'Velg hest fra treningslisten og skriv startkommentar.',
-      type: 'array',
-      of: [
-        {
-          type: 'object',
-          name: 'startRow',
-          title: 'Rad',
-          fields: [
-            defineField({
-              name: 'horse',
-              title: 'Hest',
-              type: 'reference',
-              to: [{type: 'horse'}],
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'comment',
-              title: 'Startkommentar',
-              type: 'text',
-              rows: 3,
-              validation: (Rule) => Rule.required(),
-            }),
-          ],
-          preview: {
-            select: {
-              title: 'horse.name',
-              subtitle: 'comment',
-            },
-          },
-        },
-      ],
-    }),
-
-    // Eventuell brødtekst
-    defineField({
       name: 'content',
-      title: 'Tekst',
+      title: 'Innhold',
       type: 'array',
       of: [{type: 'block'}],
+    }),
+
+    defineField({
+      name: 'link',
+      title: 'Ekstern lenke',
+      type: 'url',
     }),
   ],
 })
