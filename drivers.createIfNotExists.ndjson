@@ -1,0 +1,13 @@
+X{"createIfNotExists":{"_type":"driver","_id":"driver.bjorn-goop","name":"Björn Goop","slug":{"_type":"slug","current":"bjorn-goop"}}}
+{"createIfNotExists":{"_type":"driver","_id":"driver.frode-hamre","name":"Frode Hamre","slug":{"_type":"slug","current":"frode-hamre"}}}
+{"createIfNotExists":{"_type":"driver","_id":"driver.jeppe-juel","name":"Jeppe Juel","slug":{"_type":"slug","current":"jeppe-juel"}}}
+{"createIfNotExists":{"_type":"driver","_id":"driver.jomar-blekkan","name":"Jomar Blekkan","slug":{"_type":"slug","current":"jomar-blekkan"}}}
+{"createIfNotExists":{"_type":"driver","_id":"driver.lars-anvar-kolle","name":"Lars Anvar Kolle","slug":{"_type":"slug","current":"lars-anvar-kolle"}}}
+{"createIfNotExists":{"_type":"driver","_id":"driver.magnus-a-djuse","name":"Magnus A Djuse","slug":{"_type":"slug","current":"magnus-a-djuse"}}}
+{"createIfNotExists":{"_type":"driver","_id":"driver.magnus-t-gundersen","name":"Magnus T. Gundersen","slug":{"_type":"slug","current":"magnus-t-gundersen"}}}
+{"createIfNotExists":{"_type":"driver","_id":"driver.magnus-teien-gundersen","name":"Magnus Teien Gundersen","slug":{"_type":"slug","current":"magnus-teien-gundersen"}}}
+{"createIfNotExists":{"_type":"driver","_id":"driver.per-oleg-midtfjeld","name":"Per Oleg Midtfjeld","slug":{"_type":"slug","current":"per-oleg-midtfjeld"}}}
+{"createIfNotExists":{"_type":"driver","_id":"driver.svein-ove-wassberg","name":"Svein Ove Wassberg","slug":{"_type":"slug","current":"svein-ove-wassberg"}}}
+{"createIfNotExists":{"_type":"driver","_id":"driver.tom-erik-solberg","name":"Tom Erik Solberg","slug":{"_type":"slug","current":"tom-erik-solberg"}}}
+{"createIfNotExists":{"_type":"driver","_id":"driver.vidar-hop","name":"Vidar Hop","slug":{"_type":"slug","current":"vidar-hop"}}}
+{"createIfNotExists":{"_type":"driver","_id":"driver.aasbjorn-tengsareid","name":"Åsbjørn Tengsareid","slug":{"_type":"slug","current":"aasbjorn-tengsareid"}}}
