@@ -1,3 +1,4 @@
+// schemaTypes/horse.ts
 import { defineField, defineType } from 'sanity'
 
 export default defineType({
@@ -11,6 +12,42 @@ export default defineType({
       title: 'Navn',
       type: 'string',
       validation: (Rule) => Rule.required(),
+    }),
+
+    // ✅ Eier rett under navn (valgfri, men blir påkrevd hvis Aktiv = true)
+    defineField({
+      name: 'owner',
+      title: 'Eier',
+      type: 'reference',
+      to: [{ type: 'owner' }],
+      description:
+        'Valgfri når hesten er Ikke aktiv. Påkrevd når hesten settes som Aktiv.',
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const parent = context.parent as any
+          if (parent?.active && !value) {
+            return 'Du må velge eier når hesten settes som Aktiv.'
+          }
+          return true
+        }),
+    }),
+
+    // ✅ Aktiv / Ikke aktiv – styrer om hesten skal vises på treningslisten
+    defineField({
+      name: 'active',
+      title: 'Aktiv (i trening nå)',
+      type: 'boolean',
+      initialValue: false,
+      description:
+        'Aktiv = vises på treningslisten på nettsiden. Ikke aktiv = brukes kun til historikk/statistikk.',
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const parent = context.parent as any
+          if (value === true && !parent?.owner) {
+            return 'Velg eier før du setter hesten som Aktiv.'
+          }
+          return true
+        }),
     }),
 
     defineField({
@@ -51,51 +88,28 @@ export default defineType({
       type: 'string',
     }),
 
-    // 🔗 Eier (MÅ settes før aktiv)
-    defineField({
-      name: 'owner',
-      title: 'Eier',
-      type: 'reference',
-      to: [{ type: 'owner' }],
-      description: 'Må velges før hesten kan settes som aktiv',
-      validation: (Rule) =>
-        Rule.custom((value, context) => {
-          const parent = context.parent as any
-          if (parent?.active && !value) {
-            return 'Du må velge eier før hesten kan settes som aktiv.'
-          }
-          return true
-        }),
-    }),
-
-    // ✅ Aktiv-status (låst uten eier)
-    defineField({
-      name: 'active',
-      title: 'Aktiv',
-      type: 'boolean',
-      initialValue: false,
-
-      readOnly: ({ document }) => {
-        return !document?.owner
-      },
-
-      validation: (Rule) =>
-        Rule.custom((value, context) => {
-          const parent = context.parent as any
-          if (value === true && !parent?.owner) {
-            return 'Velg eier først før du aktiverer hesten.'
-          }
-          return true
-        }),
-    }),
-
     defineField({
       name: 'image',
       title: 'Bilde',
       type: 'image',
-      options: {
-        hotspot: true,
-      },
+      options: { hotspot: true },
+    }),
+
+    // ✅ Bildegalleri pr hest (om du vil ha dette nå)
+    defineField({
+      name: 'gallery',
+      title: 'Bildegalleri',
+      type: 'array',
+      of: [
+        {
+          type: 'image',
+          options: { hotspot: true },
+          fields: [
+            { name: 'caption', title: 'Bildetekst', type: 'string' },
+            { name: 'alt', title: 'Alt-tekst', type: 'string' },
+          ],
+        },
+      ],
     }),
 
     defineField({
@@ -108,13 +122,16 @@ export default defineType({
   preview: {
     select: {
       title: 'name',
-      subtitle: 'owner.name',
+      ownerName: 'owner.name',
+      active: 'active',
       media: 'image',
     },
-    prepare({ title, subtitle, media }) {
+    prepare({ title, ownerName, active, media }) {
+      const status = active ? 'Aktiv' : 'Ikke aktiv'
+      const owner = ownerName ? ` • Eier: ${ownerName}` : ''
       return {
         title,
-        subtitle: subtitle ? `Eier: ${subtitle}` : 'Ingen eier satt',
+        subtitle: `${status}${owner}`,
         media,
       }
     },
