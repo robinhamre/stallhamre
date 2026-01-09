@@ -36,7 +36,6 @@ export default defineType({
       validation: Rule => Rule.required(),
     }),
 
-    // ✅ ENDRET: fritekst → reference
     defineField({
       name: 'driver',
       title: 'Kusk',
@@ -45,12 +44,29 @@ export default defineType({
       validation: Rule => Rule.required(),
     }),
 
-    // ✅ ENDRET: fritekst → reference
     defineField({
       name: 'track',
       title: 'Travbane',
       type: 'reference',
       to: [{type: 'track'}],
+      validation: Rule => Rule.required(),
+    }),
+
+    // ✅ NYTT FELT – LØPSTYPE
+    defineField({
+      name: 'raceType',
+      title: 'Løpstype',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Løp', value: 'lop'},
+          {title: 'V75', value: 'v75'},
+          {title: 'V86', value: 'v86'},
+          {title: 'V85', value: 'v85'},
+          {title: 'V65', value: 'v65'},
+        ],
+        layout: 'radio', // ← ryddig UI (én valgt)
+      },
       validation: Rule => Rule.required(),
     }),
 
