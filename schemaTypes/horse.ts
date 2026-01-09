@@ -1,10 +1,10 @@
-// schemaTypes/horse.ts
-import {defineField, defineType} from 'sanity'
+import { defineField, defineType } from 'sanity'
 
 export default defineType({
   name: 'horse',
-  title: 'Treningsliste – Hest',
+  title: 'Hest',
   type: 'document',
+
   fields: [
     defineField({
       name: 'name',
@@ -14,153 +14,109 @@ export default defineType({
     }),
 
     defineField({
-      name: 'status',
-      title: 'Status',
-      type: 'string',
-      initialValue: 'active',
-      options: {
-        list: [
-          {title: 'Aktiv', value: 'active'},
-          {title: 'Ikke aktiv', value: 'inactive'},
-        ],
-        layout: 'radio',
-      },
-      validation: (Rule) => Rule.required(),
-    }),
-
-    defineField({
-      name: 'slug',
-      title: 'Slug',
-      type: 'slug',
-      options: {
-        source: 'name',
-        maxLength: 96,
-      },
-    }),
-
-    // Fødeår (årstall)
-    defineField({
-      name: 'birthYear',
-      title: 'Fødeår',
-      type: 'number', // f.eks. 2020
-    }),
-
-    // Kjønn
-    defineField({
       name: 'gender',
       title: 'Kjønn',
       type: 'string',
       options: {
         list: [
-          {title: 'Hingst', value: 'hingst'},
-          {title: 'Hoppe', value: 'hoppe'},
-          {title: 'Vallak', value: 'vallak'},
+          { title: 'Hoppe', value: 'hoppe' },
+          { title: 'Hingst', value: 'hingst' },
+          { title: 'Vallak', value: 'vallak' },
         ],
-        layout: 'radio', // eller 'dropdown' hvis du foretrekker meny
+        layout: 'radio',
       },
     }),
 
-    // Fødeland
     defineField({
-      name: 'birthCountry',
+      name: 'birthYear',
+      title: 'Fødselsår',
+      type: 'number',
+    }),
+
+    defineField({
+      name: 'country',
       title: 'Fødeland',
-      type: 'string', // f.eks. "Norge", "Sverige", "USA"
-    }),
-
-    defineField({
-      name: 'owner',
-      title: 'Eier',
       type: 'string',
     }),
 
-    // Oppdretter (etter Eier)
-    defineField({
-      name: 'breeder',
-      title: 'Oppdretter',
-      type: 'string',
-    }),
-
-    // Stamme (fri tekst hvis du vil samle alt)
-    defineField({
-      name: 'pedigree',
-      title: 'Stamme',
-      type: 'string',
-    }),
-
-    // Mor (etter Stamme)
-    defineField({
-      name: 'dam',
-      title: 'Mor',
-      type: 'string',
-    }),
-
-    // Far
     defineField({
       name: 'sire',
       title: 'Far',
       type: 'string',
     }),
 
-    // Morfar
     defineField({
-      name: 'damsire',
-      title: 'Morfar',
+      name: 'dam',
+      title: 'Mor',
       type: 'string',
+    }),
+
+    // 🔗 Eier (MÅ settes før aktiv)
+    defineField({
+      name: 'owner',
+      title: 'Eier',
+      type: 'reference',
+      to: [{ type: 'owner' }],
+      description: 'Må velges før hesten kan settes som aktiv',
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const parent = context.parent as any
+          if (parent?.active && !value) {
+            return 'Du må velge eier før hesten kan settes som aktiv.'
+          }
+          return true
+        }),
+    }),
+
+    // ✅ Aktiv-status (låst uten eier)
+    defineField({
+      name: 'active',
+      title: 'Aktiv',
+      type: 'boolean',
+      initialValue: false,
+
+      readOnly: ({ document }) => {
+        return !document?.owner
+      },
+
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const parent = context.parent as any
+          if (value === true && !parent?.owner) {
+            return 'Velg eier først før du aktiverer hesten.'
+          }
+          return true
+        }),
     }),
 
     defineField({
       name: 'image',
       title: 'Bilde',
       type: 'image',
-      options: {hotspot: true},
-      fields: [
-        defineField({
-          name: 'caption',
-          title: 'Bildetekst',
-          type: 'string',
-        }),
-
-    defineField({
-      name: 'gallery',
-      title: 'Bildegalleri',
-      type: 'array',
-      of: [
-        {
-          type: 'image',
-          options: {hotspot: true},
-          fields: [
-            {
-              name: 'alt',
-              title: 'Alt-tekst',
-              type: 'string',
-              description: 'Kort beskrivelse for universell utforming og SEO',
-            },
-            {
-              name: 'caption',
-              title: 'Bildetekst',
-              type: 'string',
-            },
-          ],
-        },
-      ],
-    }),
-        defineField({
-          name: 'alt',
-          title: 'Alt-tekst (for skjermleser)',
-          type: 'string',
-        }),
-      ],
+      options: {
+        hotspot: true,
+      },
     }),
 
     defineField({
-      name: 'link',
-      title: 'Link (lenke til annen side)',
-      type: 'url',
-      validation: (Rule) =>
-        Rule.uri({
-          allowRelative: false,
-          scheme: ['http', 'https'],
-        }),
+      name: 'notes',
+      title: 'Notater',
+      type: 'text',
     }),
   ],
+
+  preview: {
+    select: {
+      title: 'name',
+      subtitle: 'owner.name',
+      media: 'image',
+    },
+    prepare({ title, subtitle, media }) {
+      return {
+        title,
+        subtitle: subtitle ? `Eier: ${subtitle}` : 'Ingen eier satt',
+        media,
+      }
+    },
+  },
 })
