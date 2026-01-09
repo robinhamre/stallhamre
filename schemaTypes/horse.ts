@@ -1,5 +1,5 @@
 // schemaTypes/horse.ts
-import { defineField, defineType } from 'sanity'
+import {defineField, defineType} from 'sanity'
 
 export default defineType({
   name: 'horse',
@@ -14,40 +14,12 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
 
-    // ✅ Eier rett under navn (valgfri, men blir påkrevd hvis Aktiv = true)
-    defineField({
-      name: 'owner',
-      title: 'Eier',
-      type: 'reference',
-      to: [{ type: 'owner' }],
-      description:
-        'Valgfri når hesten er Ikke aktiv. Påkrevd når hesten settes som Aktiv.',
-      validation: (Rule) =>
-        Rule.custom((value, context) => {
-          const parent = context.parent as any
-          if (parent?.active && !value) {
-            return 'Du må velge eier når hesten settes som Aktiv.'
-          }
-          return true
-        }),
-    }),
-
-    // ✅ Aktiv / Ikke aktiv – styrer om hesten skal vises på treningslisten
     defineField({
       name: 'active',
-      title: 'Aktiv (i trening nå)',
+      title: 'Aktiv',
       type: 'boolean',
-      initialValue: false,
-      description:
-        'Aktiv = vises på treningslisten på nettsiden. Ikke aktiv = brukes kun til historikk/statistikk.',
-      validation: (Rule) =>
-        Rule.custom((value, context) => {
-          const parent = context.parent as any
-          if (value === true && !parent?.owner) {
-            return 'Velg eier før du setter hesten som Aktiv.'
-          }
-          return true
-        }),
+      initialValue: true,
+      description: 'Aktive hester vises i treningslisten på nettsiden.',
     }),
 
     defineField({
@@ -56,12 +28,49 @@ export default defineType({
       type: 'string',
       options: {
         list: [
-          { title: 'Hoppe', value: 'hoppe' },
-          { title: 'Hingst', value: 'hingst' },
-          { title: 'Vallak', value: 'vallak' },
+          {title: 'Hingst', value: 'hingst'},
+          {title: 'Hoppe', value: 'hoppe'},
+          {title: 'Vallak', value: 'vallak'},
         ],
         layout: 'radio',
       },
+    }),
+
+    defineField({
+      name: 'breed',
+      title: 'Rase',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Varmblods', value: 'varmblods'},
+          {title: 'Kaldblods', value: 'kaldblods'},
+        ],
+        layout: 'radio',
+      },
+    }),
+
+    // Eier: enten velge owner (reference) eller skrive manuelt
+    defineField({
+      name: 'ownerRef',
+      title: 'Eier (velg fra register)',
+      type: 'reference',
+      to: [{type: 'owner'}],
+      description: 'Valgfritt. Hvis du ikke velger her kan du skrive eier manuelt i feltet under.',
+    }),
+
+    defineField({
+      name: 'ownerText',
+      title: 'Eier (manuell tekst)',
+      type: 'string',
+      description: 'Bruk dette hvis eier ikke finnes i Owner-registeret.',
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const parent = context.parent as any
+          if (parent?.ownerRef && value) {
+            return 'Du har valgt eier fra register. Fjern manuell tekst (eller fjern register-eier).'
+          }
+          return true
+        }),
     }),
 
     defineField({
@@ -74,6 +83,14 @@ export default defineType({
       name: 'country',
       title: 'Fødeland',
       type: 'string',
+      description: 'F.eks. Norge, Sverige, USA, Tyskland',
+    }),
+
+    defineField({
+      name: 'pedigree',
+      title: 'Stamme',
+      type: 'string',
+      description: 'F.eks. e. Dream Vacation - u. Abba Hall (e. Garland Lobell)',
     }),
 
     defineField({
@@ -89,13 +106,43 @@ export default defineType({
     }),
 
     defineField({
-      name: 'image',
-      title: 'Bilde',
-      type: 'image',
-      options: { hotspot: true },
+      name: 'damsire',
+      title: 'Morfar',
+      type: 'string',
     }),
 
-    // ✅ Bildegalleri pr hest (om du vil ha dette nå)
+    defineField({
+      name: 'breeder',
+      title: 'Oppdretter',
+      type: 'string',
+    }),
+
+    defineField({
+      name: 'link',
+      title: 'Lenke',
+      type: 'url',
+      description: 'F.eks. lenke til Travsport / Rikstoto / annen referanse',
+    }),
+
+    defineField({
+      name: 'image1',
+      title: 'Bilde 1 (Hovedbilde)',
+      type: 'image',
+      options: {hotspot: true},
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt-tekst',
+          type: 'string',
+        }),
+        defineField({
+          name: 'caption',
+          title: 'Bildetekst',
+          type: 'string',
+        }),
+      ],
+    }),
+
     defineField({
       name: 'gallery',
       title: 'Bildegalleri',
@@ -103,35 +150,30 @@ export default defineType({
       of: [
         {
           type: 'image',
-          options: { hotspot: true },
+          options: {hotspot: true},
           fields: [
-            { name: 'caption', title: 'Bildetekst', type: 'string' },
-            { name: 'alt', title: 'Alt-tekst', type: 'string' },
+            {name: 'alt', title: 'Alt-tekst', type: 'string'},
+            {name: 'caption', title: 'Bildetekst', type: 'string'},
           ],
         },
       ],
-    }),
-
-    defineField({
-      name: 'notes',
-      title: 'Notater',
-      type: 'text',
     }),
   ],
 
   preview: {
     select: {
       title: 'name',
-      ownerName: 'owner.name',
       active: 'active',
-      media: 'image',
+      ownerName: 'ownerRef.name',
+      ownerText: 'ownerText',
+      media: 'image1',
     },
-    prepare({ title, ownerName, active, media }) {
+    prepare({title, active, ownerName, ownerText, media}) {
+      const ownerLabel = ownerName || ownerText || 'Ingen eier'
       const status = active ? 'Aktiv' : 'Ikke aktiv'
-      const owner = ownerName ? ` • Eier: ${ownerName}` : ''
       return {
         title,
-        subtitle: `${status}${owner}`,
+        subtitle: `${status} • ${ownerLabel}`,
         media,
       }
     },
