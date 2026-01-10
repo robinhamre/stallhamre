@@ -14,6 +14,18 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
 
+    // ✅ SLUG (rett under navn)
+    defineField({
+      name: 'slug',
+      title: 'URL / Slug',
+      type: 'slug',
+      options: {
+        source: 'name',
+        maxLength: 96,
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+
     defineField({
       name: 'active',
       title: 'Aktiv',
@@ -55,7 +67,8 @@ export default defineType({
       title: 'Eier (velg fra register)',
       type: 'reference',
       to: [{type: 'owner'}],
-      description: 'Valgfritt. Hvis du ikke velger her kan du skrive eier manuelt i feltet under.',
+      description:
+        'Valgfritt. Hvis du ikke velger her kan du skrive eier manuelt i feltet under.',
     }),
 
     defineField({
