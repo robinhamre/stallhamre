@@ -6,33 +6,28 @@ export default defineType({
   title: 'Resultat',
   type: 'document',
 
-  // ✅ Defaults (for raskere punching)
-  initialValue: {
-    raceType: 'lop',
-    distance: '2100m',
-    startMethod: 'autostart',
-  },
-
   fieldsets: [
     {
-      name: 'core',
+      name: 'grunninfo',
       title: 'Grunninfo',
-      options: {columns: 2},
+      options: {columns: 1},
     },
     {
-      name: 'raceMeta',
+      name: 'lopsdetaljer',
       title: 'Løpsdetaljer',
-      // 3 kolonner gjør at radio-felt + tid/innkjørt blir mer “kompakt”
-      options: {columns: 3},
+      options: {columns: 1},
     },
   ],
 
   fields: [
+    // -------------------
+    // Grunninfo (nedover)
+    // -------------------
     defineField({
       name: 'raceName',
       title: 'Løpsnavn',
       type: 'string',
-      fieldset: 'core',
+      fieldset: 'grunninfo',
       validation: (Rule) => Rule.required(),
     }),
 
@@ -41,7 +36,7 @@ export default defineType({
       title: 'Kategori',
       type: 'reference',
       to: [{type: 'resultCategory'}],
-      fieldset: 'core',
+      fieldset: 'grunninfo',
       validation: (Rule) => Rule.required(),
     }),
 
@@ -49,7 +44,7 @@ export default defineType({
       name: 'date',
       title: 'Dato',
       type: 'date',
-      fieldset: 'core',
+      fieldset: 'grunninfo',
       validation: (Rule) => Rule.required(),
     }),
 
@@ -58,7 +53,7 @@ export default defineType({
       title: 'Hest',
       type: 'reference',
       to: [{type: 'horse'}],
-      fieldset: 'core',
+      fieldset: 'grunninfo',
       validation: (Rule) => Rule.required(),
     }),
 
@@ -67,7 +62,7 @@ export default defineType({
       title: 'Kusk',
       type: 'reference',
       to: [{type: 'driver'}],
-      fieldset: 'core',
+      fieldset: 'grunninfo',
       validation: (Rule) => Rule.required(),
     }),
 
@@ -76,35 +71,37 @@ export default defineType({
       title: 'Travbane',
       type: 'reference',
       to: [{type: 'track'}],
-      fieldset: 'core',
+      fieldset: 'grunninfo',
       validation: (Rule) => Rule.required(),
     }),
 
-    // ✅ Løpstype (horisontal radio)
+    // -------------------
+    // Løpsdetaljer (hurtigvalg)
+    // -------------------
     defineField({
       name: 'raceType',
       title: 'Løpstype',
       type: 'string',
-      fieldset: 'raceMeta',
+      fieldset: 'lopsdetaljer',
       options: {
         list: [
-          {title: 'Løp', value: 'lop'},
-          {title: 'V75', value: 'v75'},
-          {title: 'V86', value: 'v86'},
-          {title: 'V85', value: 'v85'},
-          {title: 'V65', value: 'v65'},
+          {title: 'Løp', value: 'Løp'},
+          {title: 'V75', value: 'V75'},
+          {title: 'V86', value: 'V86'},
+          {title: 'V85', value: 'V85'},
+          {title: 'V65', value: 'V65'},
         ],
         layout: 'radio',
         direction: 'horizontal',
       },
+      initialValue: 'Løp',
     }),
 
-    // ✅ Distanse (horisontal radio)
     defineField({
       name: 'distance',
       title: 'Distanse',
       type: 'string',
-      fieldset: 'raceMeta',
+      fieldset: 'lopsdetaljer',
       options: {
         list: [
           {title: '1609m', value: '1609m'},
@@ -117,12 +114,11 @@ export default defineType({
       },
     }),
 
-    // ✅ Plassering (horisontal radio)
     defineField({
-      name: 'placing',
+      name: 'placement',
       title: 'Plassering',
       type: 'string',
-      fieldset: 'raceMeta',
+      fieldset: 'lopsdetaljer',
       options: {
         list: [
           {title: '1', value: '1'},
@@ -141,37 +137,35 @@ export default defineType({
       },
     }),
 
-    // ✅ Tid (valgfritt, kompakt)
     defineField({
       name: 'time',
       title: 'Tid',
       type: 'string',
-      fieldset: 'raceMeta',
+      fieldset: 'lopsdetaljer',
       description: 'F.eks. 1.13,8a (valgfritt)',
     }),
 
-    // ✅ Startmetode (horisontal radio)
     defineField({
       name: 'startMethod',
       title: 'Startmetode',
       type: 'string',
-      fieldset: 'raceMeta',
+      fieldset: 'lopsdetaljer',
       options: {
         list: [
-          {title: 'Autostart', value: 'autostart'},
-          {title: 'Voltestart', value: 'voltestart'},
+          {title: 'Autostart', value: 'Autostart'},
+          {title: 'Voltestart', value: 'Voltestart'},
         ],
         layout: 'radio',
         direction: 'horizontal',
       },
+      initialValue: 'Autostart',
     }),
 
-    // ✅ Innkjørt (valgfritt)
     defineField({
       name: 'earnings',
       title: 'Innkjørt',
       type: 'number',
-      fieldset: 'raceMeta',
+      fieldset: 'lopsdetaljer',
       description: 'Beløp i kroner',
     }),
   ],
