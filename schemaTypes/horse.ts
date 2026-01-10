@@ -1,5 +1,5 @@
 // schemaTypes/horse.ts
-import {defineField, defineType} from 'sanity'
+import { defineField, defineType } from 'sanity'
 
 export default defineType({
   name: 'horse',
@@ -14,14 +14,15 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
 
-    // ✅ SLUG (rett under navn)
+    // ✅ SLUG rett under navn
     defineField({
       name: 'slug',
-      title: 'URL / Slug',
+      title: 'Slug',
       type: 'slug',
       options: {
         source: 'name',
         maxLength: 96,
+        // NB: Slugify er innebygget i Sanity, dette holder som regel
       },
       validation: (Rule) => Rule.required(),
     }),
@@ -32,6 +33,18 @@ export default defineType({
       type: 'boolean',
       initialValue: true,
       description: 'Aktive hester vises i treningslisten på nettsiden.',
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const parent = context.parent as any
+          const isActive = value === true
+
+          // Når aktiv = true → må ha eier (enten register eller manuell tekst)
+          if (isActive && !parent?.ownerRef && !parent?.ownerText) {
+            return 'Når hesten er Aktiv må du velge eier (register) eller fylle inn eier manuelt.'
+          }
+
+          return true
+        }),
     }),
 
     defineField({
@@ -40,9 +53,9 @@ export default defineType({
       type: 'string',
       options: {
         list: [
-          {title: 'Hingst', value: 'hingst'},
-          {title: 'Hoppe', value: 'hoppe'},
-          {title: 'Vallak', value: 'vallak'},
+          { title: 'Hingst', value: 'hingst' },
+          { title: 'Hoppe', value: 'hoppe' },
+          { title: 'Vallak', value: 'vallak' },
         ],
         layout: 'radio',
       },
@@ -54,8 +67,8 @@ export default defineType({
       type: 'string',
       options: {
         list: [
-          {title: 'Varmblods', value: 'varmblods'},
-          {title: 'Kaldblods', value: 'kaldblods'},
+          { title: 'Varmblods', value: 'varmblods' },
+          { title: 'Kaldblods', value: 'kaldblods' },
         ],
         layout: 'radio',
       },
@@ -66,16 +79,16 @@ export default defineType({
       name: 'ownerRef',
       title: 'Eier (velg fra register)',
       type: 'reference',
-      to: [{type: 'owner'}],
+      to: [{ type: 'owner' }],
       description:
-        'Valgfritt. Hvis du ikke velger her kan du skrive eier manuelt i feltet under.',
+        'Valgfritt. Bruk dette hvis eier finnes i Owner-registeret. Hvis ikke: bruk manuell tekst under.',
     }),
 
     defineField({
       name: 'ownerText',
       title: 'Eier (manuell tekst)',
       type: 'string',
-      description: 'Bruk dette hvis eier ikke finnes i Owner-registeret.',
+      description: 'Valgfritt. Bruk dette hvis eier ikke finnes i Owner-registeret.',
       validation: (Rule) =>
         Rule.custom((value, context) => {
           const parent = context.parent as any
@@ -141,18 +154,10 @@ export default defineType({
       name: 'image1',
       title: 'Bilde 1 (Hovedbilde)',
       type: 'image',
-      options: {hotspot: true},
+      options: { hotspot: true },
       fields: [
-        defineField({
-          name: 'alt',
-          title: 'Alt-tekst',
-          type: 'string',
-        }),
-        defineField({
-          name: 'caption',
-          title: 'Bildetekst',
-          type: 'string',
-        }),
+        defineField({ name: 'alt', title: 'Alt-tekst', type: 'string' }),
+        defineField({ name: 'caption', title: 'Bildetekst', type: 'string' }),
       ],
     }),
 
@@ -163,10 +168,10 @@ export default defineType({
       of: [
         {
           type: 'image',
-          options: {hotspot: true},
+          options: { hotspot: true },
           fields: [
-            {name: 'alt', title: 'Alt-tekst', type: 'string'},
-            {name: 'caption', title: 'Bildetekst', type: 'string'},
+            { name: 'alt', title: 'Alt-tekst', type: 'string' },
+            { name: 'caption', title: 'Bildetekst', type: 'string' },
           ],
         },
       ],
@@ -181,7 +186,7 @@ export default defineType({
       ownerText: 'ownerText',
       media: 'image1',
     },
-    prepare({title, active, ownerName, ownerText, media}) {
+    prepare({ title, active, ownerName, ownerText, media }) {
       const ownerLabel = ownerName || ownerText || 'Ingen eier'
       const status = active ? 'Aktiv' : 'Ikke aktiv'
       return {
