@@ -40,6 +40,28 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
 
+    // ✅ NY: Underkategori (hurtigvalg horisontalt)
+    defineField({
+      name: 'subCategory',
+      title: 'Underkategori',
+      type: 'string',
+      fieldset: 'grunninfo',
+      options: {
+        list: [
+          {title: 'Normal', value: 'normal'},
+          {title: 'Gruppe-1', value: 'gruppe-1'},
+          {title: 'Internasjonal', value: 'internasjonal'},
+          {title: 'Klassiske', value: 'klassiske'},
+          {title: 'Andre norske', value: 'andre-norske'},
+          {title: 'Kaldblods', value: 'kaldblods'},
+        ],
+        layout: 'radio',
+        direction: 'horizontal',
+      },
+      initialValue: 'normal',
+      validation: (Rule) => Rule.required(),
+    }),
+
     defineField({
       name: 'date',
       title: 'Dato',
