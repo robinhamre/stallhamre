@@ -40,7 +40,7 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
 
-    // ✅ NY: Underkategori (hurtigvalg horisontalt)
+    // ✅ Underkategori (hurtigvalg horisontalt)
     defineField({
       name: 'subCategory',
       title: 'Underkategori',
@@ -48,18 +48,19 @@ export default defineType({
       fieldset: 'grunninfo',
       options: {
         list: [
-          {title: 'Normal', value: 'normal'},
-          {title: 'Gruppe-1', value: 'gruppe-1'},
-          {title: 'Internasjonal', value: 'internasjonal'},
-          {title: 'Klassiske', value: 'klassiske'},
-          {title: 'Andre norske', value: 'andre-norske'},
-          {title: 'Kaldblods', value: 'kaldblods'},
+          {title: 'Normal', value: 'Normal'},
+          {title: 'Gruppe-1', value: 'Gruppe-1'},
+          {title: 'Internasjonal', value: 'Internasjonal'},
+          {title: 'Klassiske', value: 'Klassiske'},
+          {title: 'Andre store', value: 'Andre store'}, // 👈 NY
+          {title: 'Andre norske', value: 'Andre norske'},
+          {title: 'Kaldblods', value: 'Kaldblods'},
+          {title: 'Mesterskap', value: 'Mesterskap'},
         ],
         layout: 'radio',
         direction: 'horizontal',
       },
-      initialValue: 'normal',
-      validation: (Rule) => Rule.required(),
+      initialValue: 'Normal',
     }),
 
     defineField({
@@ -98,7 +99,7 @@ export default defineType({
     }),
 
     // -------------------
-    // Løpsdetaljer (hurtigvalg)
+    // Løpsdetaljer
     // -------------------
     defineField({
       name: 'raceType',
@@ -164,7 +165,6 @@ export default defineType({
       title: 'Tid',
       type: 'string',
       fieldset: 'lopsdetaljer',
-      description: 'F.eks. 1.13,8a (valgfritt)',
     }),
 
     defineField({
