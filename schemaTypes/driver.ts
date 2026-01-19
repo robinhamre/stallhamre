@@ -18,6 +18,24 @@ export default defineType({
     }),
 
     defineField({
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      options: {
+        source: 'name',
+        maxLength: 96,
+        slugify: (input: string) =>
+          input
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '') // fjern spesialtegn
+            .replace(/\s+/g, '-') // mellomrom -> bindestrek
+            .replace(/-+/g, '-'), // flere bindestreker -> én
+      },
+      validation: Rule => Rule.required(),
+    }),
+
+    defineField({
       name: 'birthYear',
       title: 'Fødselsår',
       type: 'number',
