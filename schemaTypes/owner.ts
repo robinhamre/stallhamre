@@ -1,5 +1,4 @@
-// schemaTypes/owner.ts
-import {defineField, defineType} from 'sanity'
+import { defineField, defineType } from 'sanity'
 
 export default defineType({
   name: 'owner',
@@ -7,29 +6,74 @@ export default defineType({
   type: 'document',
 
   fields: [
+    // ----------------
+    // Grunninfo
+    // ----------------
     defineField({
       name: 'name',
       title: 'Navn',
       type: 'string',
-      validation: Rule => Rule.required(),
+      validation: (Rule) => Rule.required(),
     }),
 
     defineField({
-      name: 'type',
+      name: 'invoiceRecipient',
+      title: 'Fakturamottaker',
+      type: 'string',
+      description:
+        'Hvis fakturamottaker er annen enn eiernavn. Hvis tom brukes eier.',
+    }),
+
+    defineField({
+      name: 'ownerType',
       title: 'Type',
       type: 'string',
-      initialValue: 'Privat',
       options: {
         list: [
-          {title: 'Privat', value: 'Privat'},
-          {title: 'Firma', value: 'Firma'},
+          { title: 'Privat', value: 'privat' },
+          { title: 'Firma', value: 'firma' },
         ],
         layout: 'radio',
         direction: 'horizontal',
       },
-      validation: Rule => Rule.required(),
+      initialValue: 'privat',
     }),
 
+    // ----------------
+    // Kontaktinfo
+    // ----------------
+    defineField({
+      name: 'email',
+      title: 'E-post',
+      type: 'string',
+    }),
+
+    defineField({
+      name: 'phoneCountryCode',
+      title: 'Landkode',
+      type: 'string',
+      options: {
+        list: [
+          { title: '+47 (Norge)', value: '+47' },
+          { title: '+46 (Sverige)', value: '+46' },
+          { title: '+45 (Danmark)', value: '+45' },
+        ],
+        layout: 'radio',
+        direction: 'horizontal',
+      },
+      initialValue: '+47',
+    }),
+
+    defineField({
+      name: 'phone',
+      title: 'Telefon',
+      type: 'string',
+      description: 'Kun nummer, uten landkode',
+    }),
+
+    // ----------------
+    // Adresse
+    // ----------------
     defineField({
       name: 'address',
       title: 'Adresse',
@@ -43,105 +87,66 @@ export default defineType({
     }),
 
     defineField({
-      name: 'city',
+      name: 'postalPlace',
       title: 'Poststed',
       type: 'string',
     }),
 
-    // ✅ Land – Norge som standard
     defineField({
       name: 'country',
       title: 'Land',
       type: 'string',
-      initialValue: 'Norge',
       options: {
         list: [
-          {title: 'Norge', value: 'Norge'},
-          {title: 'Sverige', value: 'Sverige'},
-          {title: 'Danmark', value: 'Danmark'},
-          {title: 'Frankrike', value: 'Frankrike'},
-          {title: 'Andre', value: 'Andre'},
+          { title: 'Norge', value: 'Norge' },
+          { title: 'Sverige', value: 'Sverige' },
+          { title: 'Danmark', value: 'Danmark' },
+          { title: 'Frankrike', value: 'Frankrike' },
+          { title: 'Andre', value: 'Andre' },
         ],
         layout: 'radio',
         direction: 'horizontal',
       },
+      initialValue: 'Norge',
     }),
 
-    defineField({
-      name: 'email',
-      title: 'E-post',
-      type: 'string',
-      validation: Rule => Rule.email().warning('Ugyldig e-postformat'),
-    }),
-
-    // ✅ Automatisk landekode – settes basert på land
-    defineField({
-      name: 'phoneCountryCode',
-      title: 'Landekode',
-      type: 'string',
-      readOnly: true,
-      initialValue: '+47',
-      hidden: false,
-    }),
-
-    defineField({
-      name: 'phoneNumber',
-      title: 'Telefonnummer',
-      type: 'string',
-      description: 'Skriv kun nummer – landekode settes automatisk',
-    }),
-
+    // ----------------
+    // Hester (valgfritt)
+    // ----------------
     defineField({
       name: 'horses',
       title: 'Eide hester',
       type: 'array',
-      of: [{type: 'reference', to: [{type: 'horse'}]}],
+      of: [{ type: 'reference', to: [{ type: 'horse' }] }],
+      description: 'Valgfritt. Hester kan også velge eier fra horse.ts',
+    }),
+
+    // ----------------
+    // Notater
+    // ----------------
+    defineField({
+      name: 'notes',
+      title: 'Notater',
+      type: 'text',
     }),
   ],
-
-  // 🔁 Automatikk: land → landekode
-  document: {
-    unstable_transform: (doc: any) => {
-      const map: Record<string, string> = {
-        Norge: '+47',
-        Sverige: '+46',
-        Danmark: '+45',
-        Frankrike: '+33',
-      }
-
-      if (doc?.country && map[doc.country]) {
-        doc.phoneCountryCode = map[doc.country]
-      }
-
-      if (doc?.country === 'Andre') {
-        doc.phoneCountryCode = undefined
-      }
-
-      return doc
-    },
-  },
 
   preview: {
     select: {
       title: 'name',
-      type: 'type',
-      cc: 'phoneCountryCode',
-      phone: 'phoneNumber',
-      country: 'country',
+      invoiceRecipient: 'invoiceRecipient',
+      ownerType: 'ownerType',
     },
-    prepare(selection) {
-      const {title, type, cc, phone, country} = selection
+    prepare({ title, invoiceRecipient, ownerType }) {
+      const recipient = invoiceRecipient
+        ? `Faktura: ${invoiceRecipient}`
+        : 'Faktura = eier'
 
-      const phoneDisplay =
-        cc && phone ? `${cc} ${phone}` : phone ? phone : ''
-
-      const subtitle = [type, country, phoneDisplay]
-        .filter(Boolean)
-        .join(' · ')
+      const typeLabel = ownerType === 'firma' ? 'Firma' : 'Privat'
 
       return {
         title,
-        subtitle,
+        subtitle: `${typeLabel} • ${recipient}`,
       }
     },
   },
