@@ -7,15 +7,25 @@ export default defineType({
   type: 'document',
 
   fields: [
-    // 1. Navn
     defineField({
       name: 'name',
       title: 'Navn',
       type: 'string',
-      validation: (Rule) => Rule.required(),
+      validation: Rule => Rule.required(),
     }),
 
-    // 2. Land
+    // ✅ SLUG – brukes til egne banesider
+    defineField({
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      options: {
+        source: 'name',
+        maxLength: 96,
+      },
+      validation: Rule => Rule.required(),
+    }),
+
     defineField({
       name: 'country',
       title: 'Land',
@@ -35,50 +45,31 @@ export default defineType({
       initialValue: 'Norge',
     }),
 
-    // 3. Banelengde
     defineField({
       name: 'trackLength',
-      title: 'Banelengde (meter)',
+      title: 'Banelengde',
       type: 'number',
-      description: 'F.eks. 800, 1000, 1400',
+      description: 'Meter (f.eks. 1000)',
     }),
 
-    // 4. Oppløpslengde
     defineField({
-      name: 'homeStretch',
-      title: 'Oppløpslengde (meter)',
+      name: 'stretchLength',
+      title: 'Oppløpslengde',
       type: 'number',
-      description: 'Lengde på oppløpet i meter',
+      description: 'Meter',
     }),
 
-    // 5. Lenke
     defineField({
       name: 'link',
       title: 'Lenke',
       type: 'url',
-      description: 'F.eks. baneinfo hos Norsk Trav / Svensk Trav',
     }),
 
-    // 6. Bilde
     defineField({
       name: 'image',
       title: 'Bilde',
       type: 'image',
-      options: {
-        hotspot: true,
-      },
-      fields: [
-        defineField({
-          name: 'alt',
-          title: 'Alt-tekst',
-          type: 'string',
-        }),
-        defineField({
-          name: 'caption',
-          title: 'Bildetekst',
-          type: 'string',
-        }),
-      ],
+      options: {hotspot: true},
     }),
   ],
 
@@ -87,13 +78,6 @@ export default defineType({
       title: 'name',
       subtitle: 'country',
       media: 'image',
-    },
-    prepare({title, subtitle, media}) {
-      return {
-        title,
-        subtitle: subtitle ? `Land: ${subtitle}` : '',
-        media,
-      }
     },
   },
 })
