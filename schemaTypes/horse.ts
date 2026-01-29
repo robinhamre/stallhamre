@@ -22,7 +22,6 @@ export default defineType({
       options: {
         source: 'name',
         maxLength: 96,
-        // NB: Slugify er innebygget i Sanity, dette holder som regel
       },
       validation: (Rule) => Rule.required(),
     }),
@@ -45,6 +44,21 @@ export default defineType({
 
           return true
         }),
+    }),
+
+    // ✅ Intern føring (valgfritt)
+    defineField({
+      name: 'inDate',
+      title: 'Hest inn (dato)',
+      type: 'date',
+      description: 'Valgfritt. Intern føring for når hesten kom i trening.',
+    }),
+
+    defineField({
+      name: 'outDate',
+      title: 'Hest ut (dato)',
+      type: 'date',
+      description: 'Valgfritt. Intern føring for når hesten forlot trening.',
     }),
 
     defineField({
