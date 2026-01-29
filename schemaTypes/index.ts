@@ -2,6 +2,7 @@
 
 import category from './category'
 import horse from './horse'
+import owner from './owner'
 import driver from './driver'
 import track from './track'
 import imageLibrary from './imageLibrary'
@@ -17,11 +18,15 @@ import reportageCategory from './reportageCategory'
 import winStats from './winStats'
 import yearStats from './yearStats'
 import yearStatsHistoric from './yearStatsHistoric'
-import owner from './owner' // ✅ NY
+
+// 🆕 NYE
+import supplier from './supplier'
+import invoice from './invoice'
 
 export const schemaTypes = [
   category,
   horse,
+  owner,
   driver,
   track,
   imageLibrary,
@@ -37,5 +42,8 @@ export const schemaTypes = [
   winStats,
   yearStats,
   yearStatsHistoric,
-  owner, // ✅ NY
+
+  // 🆕 NYE
+  supplier,
+  invoice,
 ]
