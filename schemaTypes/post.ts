@@ -159,5 +159,22 @@ export default defineType({
         layout: 'tags',
       },
     }),
+
+    // ✅ NYTT: Bildegalleri (med bildetekst)
+    defineField({
+      name: 'gallery',
+      title: 'Bildegalleri',
+      type: 'array',
+      of: [
+        {
+          type: 'image',
+          options: {hotspot: true},
+          fields: [
+            {name: 'caption', title: 'Bildetekst', type: 'string'},
+            {name: 'alt', title: 'Alt-tekst', type: 'string'},
+          ],
+        },
+      ],
+    }),
   ],
 })
