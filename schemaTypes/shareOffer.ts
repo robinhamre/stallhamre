@@ -3,70 +3,22 @@ import {defineField, defineType} from 'sanity'
 
 export default defineType({
   name: 'shareOffer',
-  title: 'Ledige andeler',
+  title: 'Andelstilbud',
   type: 'document',
+
   fields: [
-    // Grunninfo – samme som hest
+    // Knytter andelstilbud til hest (henter data fra horse.ts via reference)
     defineField({
-      name: 'name',
-      title: 'Navn',
-      type: 'string',
+      name: 'horse',
+      title: 'Hest',
+      type: 'reference',
+      to: [{type: 'horse'}],
       validation: (Rule) => Rule.required(),
     }),
 
-    defineField({
-      name: 'slug',
-      title: 'Slug',
-      type: 'slug',
-      options: {
-        source: 'name',
-        maxLength: 96,
-      },
-    }),
-
-    defineField({
-      name: 'owner',
-      title: 'Eier',
-      type: 'string',
-    }),
-
-    defineField({
-      name: 'pedigree',
-      title: 'Stamme',
-      type: 'string',
-    }),
-
-    defineField({
-      name: 'image',
-      title: 'Bilde',
-      type: 'image',
-      options: {hotspot: true},
-      fields: [
-        defineField({
-          name: 'caption',
-          title: 'Bildetekst',
-          type: 'string',
-        }),
-        defineField({
-          name: 'alt',
-          title: 'Alt-tekst (for skjermleser)',
-          type: 'string',
-        }),
-      ],
-    }),
-
-    defineField({
-      name: 'link',
-      title: 'Link (lenke til annen side)',
-      type: 'url',
-      validation: (Rule) =>
-        Rule.uri({
-          allowRelative: false,
-          scheme: ['http', 'https'],
-        }),
-    }),
-
-    // Ekstra felter for andeler
+    // -----------------------
+    // Om andeler
+    // -----------------------
     defineField({
       name: 'totalShares',
       title: 'Antall andeler',
@@ -80,18 +32,81 @@ export default defineType({
     }),
 
     defineField({
-      name: 'depositPrice',
-      title: 'Pris innskudd',
-      type: 'string', // f.eks. "5 000 kr per andel"
+      name: 'pricePerShare',
+      title: 'Pris pr andel',
+      type: 'number',
+      description: 'Beløp i kroner',
+    }),
+
+    // -----------------------
+    // Informasjon rundt andelen
+    // -----------------------
+    defineField({
+      name: 'manager',
+      title: 'Andelsbestyrer',
+      type: 'string',
     }),
 
     defineField({
+      name: 'frodesComment',
+      title: 'Frodes kommentar',
+      type: 'text',
+      rows: 4,
+    }),
+
+    defineField({
+      name: 'duration',
+      title: 'Løpetid for andel',
+      type: 'string',
+    }),
+
+    // YouTube først
+    defineField({
+      name: 'videoUrl',
+      title: 'Video (YouTube-link)',
+      type: 'url',
+      description: 'Lim inn YouTube URL',
+    }),
+
+    // Bildegalleri mellom YouTube og PDF
+    defineField({
+      name: 'gallery',
+      title: 'Bildegalleri',
+      type: 'array',
+      of: [
+        {
+          type: 'image',
+          options: {hotspot: true},
+          fields: [
+            {name: 'caption', title: 'Bildetekst', type: 'string'},
+            {name: 'alt', title: 'Alt-tekst', type: 'string'},
+          ],
+        },
+      ],
+    }),
+
+    // PDF til slutt
+    defineField({
       name: 'contract',
-      title: 'Vilkår / kontrakt (PDF)',
+      title: 'Andelskontrakt (PDF)',
       type: 'file',
-      options: {
-        accept: 'application/pdf',
-      },
+      options: {accept: '.pdf'},
     }),
   ],
+
+  preview: {
+    select: {
+      title: 'horse.name',
+      media: 'gallery.0',
+      availableShares: 'availableShares',
+    },
+    prepare({title, media, availableShares}) {
+      return {
+        title: title || 'Andelstilbud',
+        subtitle:
+          availableShares !== undefined ? `Ledige andeler: ${availableShares}` : '',
+        media,
+      }
+    },
+  },
 })
