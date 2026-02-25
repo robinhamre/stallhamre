@@ -15,6 +15,25 @@ export default defineType({
     }),
 
     defineField({
+      name: 'image',
+      title: 'Bilde',
+      type: 'image',
+      options: {hotspot: true},
+      fields: [
+        {
+          name: 'alt',
+          title: 'Alt-tekst',
+          type: 'string',
+        },
+        {
+          name: 'caption',
+          title: 'Bildetekst',
+          type: 'string',
+        },
+      ],
+    }),
+
+    defineField({
       name: 'phone',
       title: 'Telefon',
       type: 'string',
@@ -38,11 +57,13 @@ export default defineType({
     select: {
       title: 'name',
       subtitle: 'phone',
+      media: 'image',
     },
-    prepare({title, subtitle}) {
+    prepare({title, subtitle, media}) {
       return {
         title: title || 'Andelsbestyrer',
         subtitle: subtitle ? `Tlf: ${subtitle}` : '',
+        media,
       }
     },
   },
