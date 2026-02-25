@@ -16,9 +16,10 @@ import resultCategory from './resultCategory'
 import reportage from './reportage'
 import reportageCategory from './reportageCategory'
 import winStats from './winStats'
-import yearStats from './yearStats'
+import yearStats from './yearStatsHistoric'
 import yearStatsHistoric from './yearStatsHistoric'
 import owner from './owner'
+import supplier from './supplier'   // ← DENNE MANGLET
 import invoice from './invoice'
 
 export const schemaTypes = [
@@ -41,5 +42,6 @@ export const schemaTypes = [
   yearStats,
   yearStatsHistoric,
   owner,
+  supplier,   // ← DENNE MANGLET
   invoice,
 ]
