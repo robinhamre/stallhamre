@@ -15,12 +15,10 @@ import result from './result'
 import resultCategory from './resultCategory'
 import reportage from './reportage'
 import reportageCategory from './reportageCategory'
-import winStats from './winStats'
-import yearStats from './yearStatsHistoric'
-import yearStatsHistoric from './yearStatsHistoric'
 import owner from './owner'
-import supplier from './supplier'   // ← DENNE MANGLET
+import supplier from './supplier'
 import invoice from './invoice'
+import yearStatsHistoric from './yearStatsHistoric'
 
 export const schemaTypes = [
   category,
@@ -38,10 +36,8 @@ export const schemaTypes = [
   resultCategory,
   reportage,
   reportageCategory,
-  winStats,
-  yearStats,
-  yearStatsHistoric,
   owner,
-  supplier,   // ← DENNE MANGLET
+  supplier,
   invoice,
+  yearStatsHistoric, // kun denne beholdes
 ]
