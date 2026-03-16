@@ -11,6 +11,7 @@ import tipsCategory from './tipsCategory'
 import staff from './staff'
 import shareOffer from './shareOffer'
 import shareManager from './shareManager'
+import shareOwner from './shareOwner'
 import result from './result'
 import resultCategory from './resultCategory'
 import reportage from './reportage'
@@ -32,6 +33,7 @@ export const schemaTypes = [
   staff,
   shareOffer,
   shareManager,
+  shareOwner,
   result,
   resultCategory,
   reportage,
@@ -39,5 +41,5 @@ export const schemaTypes = [
   owner,
   supplier,
   invoice,
-  yearStatsHistoric, // kun denne beholdes
+  yearStatsHistoric,
 ]
