@@ -44,6 +44,7 @@ export const structure = (S: StructureBuilder) =>
               S.documentTypeListItem('shareOffer').title('Andelstilbud'),
               S.documentTypeListItem('shareManager').title('Andelsbestyrer'),
               S.documentTypeListItem('payoutNotice').title('Ubetalingsbeskjeder'),
+              S.documentTypeListItem('andelsfaktura').title('Andelsfakturaer'),
             ])
         ),
 
