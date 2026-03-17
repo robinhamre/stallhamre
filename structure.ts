@@ -4,8 +4,6 @@ export const structure = (S: StructureBuilder) =>
   S.list()
     .title('Content')
     .items([
-
-      // 🐎 SPORT
       S.listItem()
         .title('Sport')
         .child(
@@ -20,7 +18,6 @@ export const structure = (S: StructureBuilder) =>
             ])
         ),
 
-      // 📰 INNHOLD
       S.listItem()
         .title('Innhold')
         .child(
@@ -36,7 +33,6 @@ export const structure = (S: StructureBuilder) =>
             ])
         ),
 
-      // 👥 STALL / ANDELER
       S.listItem()
         .title('Stall / Andeler')
         .child(
@@ -47,10 +43,10 @@ export const structure = (S: StructureBuilder) =>
               S.documentTypeListItem('shareOwner').title('Andelseier'),
               S.documentTypeListItem('shareOffer').title('Andelstilbud'),
               S.documentTypeListItem('shareManager').title('Andelsbestyrer'),
+              S.documentTypeListItem('payoutNotice').title('Ubetalingsbeskjeder'),
             ])
         ),
 
-      // 👨‍💼 ADMINISTRASJON
       S.listItem()
         .title('Administrasjon')
         .child(
@@ -63,7 +59,6 @@ export const structure = (S: StructureBuilder) =>
             ])
         ),
 
-      // 🖼 MEDIA
       S.listItem()
         .title('Media')
         .child(
@@ -74,7 +69,6 @@ export const structure = (S: StructureBuilder) =>
             ])
         ),
 
-      // 📊 HISTORIKK
       S.listItem()
         .title('Historikk')
         .child(
@@ -84,5 +78,4 @@ export const structure = (S: StructureBuilder) =>
               S.documentTypeListItem('yearStatsHistoric').title('År-historisk'),
             ])
         ),
-
     ])
