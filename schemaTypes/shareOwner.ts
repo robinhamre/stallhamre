@@ -50,7 +50,6 @@ export default defineType({
       type: 'string',
     }),
 
-    // Hester og eierandel
     defineField({
       name: 'horses',
       title: 'Hester / eierandel',
@@ -85,6 +84,21 @@ export default defineType({
                 subtitle: ownership ? `${ownership}% eierandel` : '',
               }
             },
+          },
+        },
+      ],
+    }),
+
+    defineField({
+      name: 'contracts',
+      title: 'Andelskontrakter',
+      type: 'array',
+      of: [
+        {
+          type: 'file',
+          title: 'PDF',
+          options: {
+            accept: 'application/pdf',
           },
         },
       ],
