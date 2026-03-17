@@ -22,7 +22,6 @@ export default defineType({
   type: 'document',
 
   fields: [
-    // 🐎 NYTT FELT
     defineField({
       name: 'horse',
       title: 'Hest',
@@ -97,7 +96,8 @@ export default defineType({
             {
               name: 'supplier',
               title: 'Leverandør',
-              type: 'string',
+              type: 'reference',
+              to: [{type: 'supplier'}],
               validation: (Rule: any) => Rule.required(),
             },
             {
@@ -133,16 +133,16 @@ export default defineType({
           ],
           preview: {
             select: {
-              title: 'supplier',
+              supplierName: 'supplier.name',
               invoiceNumber: 'invoiceNumber',
               amount: 'amountInclVat',
             },
             prepare({
-              title,
+              supplierName,
               invoiceNumber,
               amount,
             }: {
-              title?: string
+              supplierName?: string
               invoiceNumber?: string
               amount?: number
             }) {
@@ -152,7 +152,7 @@ export default defineType({
                   : ''
 
               return {
-                title: title || 'Vedlegg',
+                title: supplierName || 'Vedlegg',
                 subtitle: [
                   invoiceNumber ? `Faktura: ${invoiceNumber}` : '',
                   amountLabel,
