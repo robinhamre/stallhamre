@@ -78,10 +78,11 @@ export default defineType({
               title: 'horse.name',
               ownership: 'ownership',
             },
-            prepare({title, ownership}) {
+            prepare({title, ownership}: {title?: string; ownership?: number}) {
               return {
                 title: title || 'Hest',
-                subtitle: ownership ? `${ownership}% eierandel` : '',
+                subtitle:
+                  ownership !== undefined ? `${ownership}% eierandel` : '',
               }
             },
           },
@@ -95,10 +96,53 @@ export default defineType({
       type: 'array',
       of: [
         {
-          type: 'file',
-          title: 'PDF',
-          options: {
-            accept: 'application/pdf',
+          type: 'object',
+          name: 'contractItem',
+          title: 'Andelskontrakt',
+          fields: [
+            {
+              name: 'horse',
+              title: 'Hest',
+              type: 'reference',
+              to: [{type: 'horse'}],
+            },
+            {
+              name: 'ownership',
+              title: 'Andelsprosent (%)',
+              type: 'number',
+              description: 'Andelsprosent for denne kontrakten',
+            },
+            {
+              name: 'file',
+              title: 'PDF',
+              type: 'file',
+              options: {
+                accept: 'application/pdf',
+              },
+            },
+          ],
+          preview: {
+            select: {
+              title: 'horse.name',
+              ownership: 'ownership',
+              media: 'file',
+            },
+            prepare({
+              title,
+              ownership,
+              media,
+            }: {
+              title?: string
+              ownership?: number
+              media?: unknown
+            }) {
+              return {
+                title: title || 'Andelskontrakt',
+                subtitle:
+                  ownership !== undefined ? `${ownership}% andel` : 'PDF',
+                media,
+              }
+            },
           },
         },
       ],
@@ -110,7 +154,7 @@ export default defineType({
       title: 'name',
       subtitle: 'city',
     },
-    prepare({title, subtitle}) {
+    prepare({title, subtitle}: {title?: string; subtitle?: string}) {
       return {
         title,
         subtitle: subtitle ? `Sted: ${subtitle}` : '',
