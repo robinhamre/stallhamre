@@ -14,7 +14,6 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
 
-    // ✅ SLUG rett under navn
     defineField({
       name: 'slug',
       title: 'Slug',
@@ -37,7 +36,6 @@ export default defineType({
           const parent = context.parent as any
           const isActive = value === true
 
-          // Når aktiv = true → må ha eier (enten register eller manuell tekst)
           if (isActive && !parent?.ownerRef && !parent?.ownerText) {
             return 'Når hesten er Aktiv må du velge eier (register) eller fylle inn eier manuelt.'
           }
@@ -46,7 +44,6 @@ export default defineType({
         }),
     }),
 
-    // ✅ Intern føring (valgfritt)
     defineField({
       name: 'inDate',
       title: 'Hest inn (dato)',
@@ -88,7 +85,6 @@ export default defineType({
       },
     }),
 
-    // Eier: enten velge owner (reference) eller skrive manuelt
     defineField({
       name: 'ownerRef',
       title: 'Eier (velg fra register)',
@@ -146,9 +142,82 @@ export default defineType({
     }),
 
     defineField({
+      name: 'paternalGrandsire',
+      title: 'Farfar',
+      type: 'string',
+    }),
+
+    defineField({
+      name: 'paternalGranddam',
+      title: 'Farmor',
+      type: 'string',
+    }),
+
+    defineField({
+      name: 'maternalGrandsire',
+      title: 'Morfar',
+      type: 'string',
+    }),
+
+    defineField({
+      name: 'maternalGranddam',
+      title: 'Mormor',
+      type: 'string',
+    }),
+
+    defineField({
+      name: 'paternalGrandsireSire',
+      title: "Farfar´s far",
+      type: 'string',
+    }),
+
+    defineField({
+      name: 'paternalGrandsireDam',
+      title: "Farfar´s mor",
+      type: 'string',
+    }),
+
+    defineField({
+      name: 'paternalGranddamSire',
+      title: "Farmor´s far",
+      type: 'string',
+    }),
+
+    defineField({
+      name: 'paternalGranddamDam',
+      title: "Farmor´s mor",
+      type: 'string',
+    }),
+
+    defineField({
+      name: 'maternalGrandsireSire',
+      title: "Morfar´s far",
+      type: 'string',
+    }),
+
+    defineField({
+      name: 'maternalGrandsireDam',
+      title: "Morfar´s mor",
+      type: 'string',
+    }),
+
+    defineField({
+      name: 'maternalGranddamSire',
+      title: "Mormor´s far",
+      type: 'string',
+    }),
+
+    defineField({
+      name: 'maternalGranddamDam',
+      title: 'Mormors mor',
+      type: 'string',
+    }),
+
+    defineField({
       name: 'damsire',
       title: 'Morfar',
       type: 'string',
+      description: 'Eksisterende felt beholdes for kompatibilitet med eldre innhold.',
     }),
 
     defineField({
