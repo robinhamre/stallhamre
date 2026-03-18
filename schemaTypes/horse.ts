@@ -25,6 +25,14 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
 
+    // 🆕 ULEN
+    defineField({
+      name: 'ulen',
+      title: 'ULEN (Regnr)',
+      type: 'string',
+      description: 'Unikt registreringsnummer fra travsport',
+    }),
+
     defineField({
       name: 'active',
       title: 'Aktiv',
