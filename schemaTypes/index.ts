@@ -20,8 +20,7 @@ import owner from './owner'
 import supplier from './supplier'
 import invoice from './invoice'
 import yearStatsHistoric from './yearStatsHistoric'
-import payoutNotice from './payoutNotice'
-import andelsfaktura from './andelsfaktura' // 👈 NY
+import andelshest from './andelshest'
 
 export const schemaTypes = [
   category,
@@ -44,6 +43,5 @@ export const schemaTypes = [
   supplier,
   invoice,
   yearStatsHistoric,
-  payoutNotice,
-  andelsfaktura, // 👈 NY
+  andelshest,
 ]
