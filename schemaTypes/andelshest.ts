@@ -404,16 +404,31 @@ export default defineType({
               title: 'Dato',
               type: 'date',
             },
+            {
+              name: 'author',
+              title: 'Forfatter',
+              type: 'reference',
+              to: [{type: 'staff'}, {type: 'shareManager'}],
+            },
           ],
           preview: {
             select: {
               title: 'title',
               date: 'date',
+              authorName: 'author.name',
             },
-            prepare({title, date}: {title?: string; date?: string}) {
+            prepare({
+              title,
+              date,
+              authorName,
+            }: {
+              title?: string
+              date?: string
+              authorName?: string
+            }) {
               return {
                 title: title || 'YouTube-oppdatering',
-                subtitle: date || '',
+                subtitle: [date, authorName].filter(Boolean).join(' • '),
               }
             },
           },
@@ -444,16 +459,31 @@ export default defineType({
               title: 'Dato',
               type: 'date',
             },
+            {
+              name: 'author',
+              title: 'Forfatter',
+              type: 'reference',
+              to: [{type: 'staff'}, {type: 'shareManager'}],
+            },
           ],
           preview: {
             select: {
               title: 'title',
               date: 'date',
+              authorName: 'author.name',
             },
-            prepare({title, date}: {title?: string; date?: string}) {
+            prepare({
+              title,
+              date,
+              authorName,
+            }: {
+              title?: string
+              date?: string
+              authorName?: string
+            }) {
               return {
                 title: title || 'Treningsrapport',
-                subtitle: date || '',
+                subtitle: [date, authorName].filter(Boolean).join(' • '),
               }
             },
           },
