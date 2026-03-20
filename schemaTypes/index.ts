@@ -9,6 +9,7 @@ import post from './post'
 import tips from './tips'
 import tipsCategory from './tipsCategory'
 import staff from './staff'
+import oppasser from './oppasser'
 import shareOffer from './shareOffer'
 import shareManager from './shareManager'
 import shareOwner from './shareOwner'
@@ -32,6 +33,7 @@ export const schemaTypes = [
   tips,
   tipsCategory,
   staff,
+  oppasser,
   shareOffer,
   shareManager,
   shareOwner,
