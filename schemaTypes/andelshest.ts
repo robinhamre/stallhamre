@@ -38,6 +38,15 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
 
+    // 👇 NYTT FELT
+    defineField({
+      name: 'caretaker',
+      title: 'Oppasser',
+      type: 'reference',
+      to: [{type: 'staff'}],
+      description: 'Velg oppasser for hesten',
+    }),
+
     defineField({
       name: 'payoutNotices',
       title: 'Utbetalingsbeskjeder',
@@ -54,71 +63,22 @@ export default defineType({
               type: 'reference',
               to: [{type: 'supplier'}],
             },
-            {
-              name: 'year',
-              title: 'År',
-              type: 'number',
-            },
+            {name: 'year', title: 'År', type: 'number'},
             {
               name: 'month',
               title: 'Periode',
               type: 'string',
-              options: {
-                list: months,
-                layout: 'dropdown',
-              },
+              options: {list: months, layout: 'dropdown'},
             },
-            {
-              name: 'invoiceNumber',
-              title: 'Fakturanummer',
-              type: 'string',
-            },
-            {
-              name: 'amount',
-              title: 'Netto sum til utbetaling',
-              type: 'number',
-            },
+            {name: 'invoiceNumber', title: 'Fakturanummer', type: 'string'},
+            {name: 'amount', title: 'Netto sum til utbetaling', type: 'number'},
             {
               name: 'pdf',
               title: 'PDF (valgfri)',
               type: 'file',
-              options: {
-                accept: 'application/pdf',
-              },
+              options: {accept: 'application/pdf'},
             },
           ],
-          preview: {
-            select: {
-              supplierName: 'supplier.name',
-              year: 'year',
-              month: 'month',
-              amount: 'amount',
-            },
-            prepare({
-              supplierName,
-              year,
-              month,
-              amount,
-            }: {
-              supplierName?: string
-              year?: number
-              month?: string
-              amount?: number
-            }) {
-              const monthLabel = months.find((m) => m.value === month)?.title || month || ''
-              const amountLabel =
-                typeof amount === 'number'
-                  ? `${amount.toLocaleString('nb-NO')} kr`
-                  : ''
-
-              return {
-                title: supplierName || 'Utbetaling',
-                subtitle: [monthLabel, year?.toString(), amountLabel]
-                  .filter(Boolean)
-                  .join(' • '),
-              }
-            },
-          },
         },
       ],
     }),
@@ -139,70 +99,23 @@ export default defineType({
               type: 'reference',
               to: [{type: 'supplier'}],
             },
-            {
-              name: 'title',
-              title: 'Beskrivelse',
-              type: 'string',
-            },
-            {
-              name: 'year',
-              title: 'År',
-              type: 'number',
-            },
+            {name: 'title', title: 'Beskrivelse', type: 'string'},
+            {name: 'year', title: 'År', type: 'number'},
             {
               name: 'month',
               title: 'Periode',
               type: 'string',
-              options: {
-                list: months,
-                layout: 'dropdown',
-              },
+              options: {list: months, layout: 'dropdown'},
             },
-            {
-              name: 'invoiceNumber',
-              title: 'Fakturanummer',
-              type: 'string',
-            },
-            {
-              name: 'amount',
-              title: 'Netto sum',
-              type: 'number',
-            },
+            {name: 'invoiceNumber', title: 'Fakturanummer', type: 'string'},
+            {name: 'amount', title: 'Netto sum', type: 'number'},
             {
               name: 'pdf',
               title: 'PDF',
               type: 'file',
-              options: {
-                accept: 'application/pdf',
-              },
+              options: {accept: 'application/pdf'},
             },
           ],
-          preview: {
-            select: {
-              supplierName: 'supplier.name',
-              title: 'title',
-              amount: 'amount',
-            },
-            prepare({
-              supplierName,
-              title,
-              amount,
-            }: {
-              supplierName?: string
-              title?: string
-              amount?: number
-            }) {
-              const amountLabel =
-                typeof amount === 'number'
-                  ? `${amount.toLocaleString('nb-NO')} kr`
-                  : ''
-
-              return {
-                title: title || supplierName || 'Inntekt',
-                subtitle: [supplierName, amountLabel].filter(Boolean).join(' • '),
-              }
-            },
-          },
         },
       ],
     }),
@@ -223,42 +136,21 @@ export default defineType({
               type: 'reference',
               to: [{type: 'supplier'}],
             },
-            {
-              name: 'invoiceNumber',
-              title: 'Fakturanummer',
-              type: 'string',
-            },
-            {
-              name: 'invoiceDate',
-              title: 'Fakturadato',
-              type: 'date',
-            },
+            {name: 'invoiceNumber', title: 'Fakturanummer', type: 'string'},
+            {name: 'invoiceDate', title: 'Fakturadato', type: 'date'},
             {
               name: 'month',
               title: 'Periode',
               type: 'string',
-              options: {
-                list: months,
-                layout: 'dropdown',
-              },
+              options: {list: months, layout: 'dropdown'},
             },
-            {
-              name: 'year',
-              title: 'År',
-              type: 'number',
-            },
-            {
-              name: 'total',
-              title: 'Totalsum inkl. mva',
-              type: 'number',
-            },
+            {name: 'year', title: 'År', type: 'number'},
+            {name: 'total', title: 'Totalsum inkl. mva', type: 'number'},
             {
               name: 'mainPdf',
               title: 'Hovedfaktura PDF',
               type: 'file',
-              options: {
-                accept: 'application/pdf',
-              },
+              options: {accept: 'application/pdf'},
             },
             {
               name: 'attachments',
@@ -276,100 +168,20 @@ export default defineType({
                       type: 'reference',
                       to: [{type: 'supplier'}],
                     },
-                    {
-                      name: 'invoiceNumber',
-                      title: 'Fakturanummer',
-                      type: 'string',
-                    },
-                    {
-                      name: 'invoiceDate',
-                      title: 'Fakturadato',
-                      type: 'date',
-                    },
-                    {
-                      name: 'amount',
-                      title: 'Sum inkl. mva',
-                      type: 'number',
-                    },
+                    {name: 'invoiceNumber', title: 'Fakturanummer', type: 'string'},
+                    {name: 'invoiceDate', title: 'Fakturadato', type: 'date'},
+                    {name: 'amount', title: 'Sum inkl. mva', type: 'number'},
                     {
                       name: 'pdf',
                       title: 'PDF',
                       type: 'file',
-                      options: {
-                        accept: 'application/pdf',
-                      },
+                      options: {accept: 'application/pdf'},
                     },
                   ],
-                  preview: {
-                    select: {
-                      supplierName: 'supplier.name',
-                      invoiceNumber: 'invoiceNumber',
-                      amount: 'amount',
-                    },
-                    prepare({
-                      supplierName,
-                      invoiceNumber,
-                      amount,
-                    }: {
-                      supplierName?: string
-                      invoiceNumber?: string
-                      amount?: number
-                    }) {
-                      const amountLabel =
-                        typeof amount === 'number'
-                          ? `${amount.toLocaleString('nb-NO')} kr`
-                          : ''
-
-                      return {
-                        title: supplierName || 'Vedlegg',
-                        subtitle: [
-                          invoiceNumber ? `Faktura: ${invoiceNumber}` : '',
-                          amountLabel,
-                        ]
-                          .filter(Boolean)
-                          .join(' • '),
-                      }
-                    },
-                  },
                 },
               ],
             },
           ],
-          preview: {
-            select: {
-              supplierName: 'supplier.name',
-              invoiceNumber: 'invoiceNumber',
-              month: 'month',
-              year: 'year',
-              total: 'total',
-            },
-            prepare({
-              supplierName,
-              invoiceNumber,
-              month,
-              year,
-              total,
-            }: {
-              supplierName?: string
-              invoiceNumber?: string
-              month?: string
-              year?: number
-              total?: number
-            }) {
-              const monthLabel = months.find((m) => m.value === month)?.title || month || ''
-              const totalLabel =
-                typeof total === 'number'
-                  ? `${total.toLocaleString('nb-NO')} kr`
-                  : ''
-
-              return {
-                title: invoiceNumber || supplierName || 'Faktura',
-                subtitle: [supplierName, monthLabel, year?.toString(), totalLabel]
-                  .filter(Boolean)
-                  .join(' • '),
-              }
-            },
-          },
         },
       ],
     }),
@@ -384,26 +196,10 @@ export default defineType({
           name: 'youtubeUpdate',
           title: 'YouTube-oppdatering',
           fields: [
-            {
-              name: 'title',
-              title: 'Overskrift',
-              type: 'string',
-            },
-            {
-              name: 'description',
-              title: 'Beskrivelse',
-              type: 'text',
-            },
-            {
-              name: 'youtubeUrl',
-              title: 'YouTube link',
-              type: 'url',
-            },
-            {
-              name: 'date',
-              title: 'Dato',
-              type: 'date',
-            },
+            {name: 'title', title: 'Overskrift', type: 'string'},
+            {name: 'description', title: 'Beskrivelse', type: 'text'},
+            {name: 'youtubeUrl', title: 'YouTube link', type: 'url'},
+            {name: 'date', title: 'Dato', type: 'date'},
             {
               name: 'author',
               title: 'Forfatter',
@@ -411,54 +207,21 @@ export default defineType({
               to: [{type: 'staff'}, {type: 'shareManager'}],
             },
           ],
-          preview: {
-            select: {
-              title: 'title',
-              date: 'date',
-              authorName: 'author.name',
-            },
-            prepare({
-              title,
-              date,
-              authorName,
-            }: {
-              title?: string
-              date?: string
-              authorName?: string
-            }) {
-              return {
-                title: title || 'YouTube-oppdatering',
-                subtitle: [date, authorName].filter(Boolean).join(' • '),
-              }
-            },
-          },
         },
         {
           type: 'object',
           name: 'trainingReport',
           title: 'Treningsrapport',
           fields: [
-            {
-              name: 'title',
-              title: 'Overskrift',
-              type: 'string',
-            },
-            {
-              name: 'description',
-              title: 'Beskrivelse',
-              type: 'text',
-            },
+            {name: 'title', title: 'Overskrift', type: 'string'},
+            {name: 'description', title: 'Beskrivelse', type: 'text'},
             {
               name: 'images',
               title: 'Bildegalleri',
               type: 'array',
               of: [{type: 'image'}],
             },
-            {
-              name: 'date',
-              title: 'Dato',
-              type: 'date',
-            },
+            {name: 'date', title: 'Dato', type: 'date'},
             {
               name: 'author',
               title: 'Forfatter',
@@ -466,27 +229,6 @@ export default defineType({
               to: [{type: 'staff'}, {type: 'shareManager'}],
             },
           ],
-          preview: {
-            select: {
-              title: 'title',
-              date: 'date',
-              authorName: 'author.name',
-            },
-            prepare({
-              title,
-              date,
-              authorName,
-            }: {
-              title?: string
-              date?: string
-              authorName?: string
-            }) {
-              return {
-                title: title || 'Treningsrapport',
-                subtitle: [date, authorName].filter(Boolean).join(' • '),
-              }
-            },
-          },
         },
       ],
     }),
@@ -501,49 +243,16 @@ export default defineType({
           name: 'raceComment',
           title: 'Løpskommentar',
           fields: [
-            {
-              name: 'title',
-              title: 'Overskrift',
-              type: 'string',
-            },
-            {
-              name: 'date',
-              title: 'Dato',
-              type: 'date',
-            },
+            {name: 'title', title: 'Overskrift', type: 'string'},
+            {name: 'date', title: 'Dato', type: 'date'},
             {
               name: 'author',
               title: 'Forfatter',
               type: 'reference',
               to: [{type: 'staff'}],
             },
-            {
-              name: 'description',
-              title: 'Beskrivelse',
-              type: 'text',
-            },
+            {name: 'description', title: 'Beskrivelse', type: 'text'},
           ],
-          preview: {
-            select: {
-              title: 'title',
-              date: 'date',
-              authorName: 'author.name',
-            },
-            prepare({
-              title,
-              date,
-              authorName,
-            }: {
-              title?: string
-              date?: string
-              authorName?: string
-            }) {
-              return {
-                title: title || 'Løpskommentar',
-                subtitle: [date, authorName].filter(Boolean).join(' • '),
-              }
-            },
-          },
         },
       ],
     }),
@@ -554,13 +263,7 @@ export default defineType({
       horseName: 'horse.name',
       managerName: 'shareManager.name',
     },
-    prepare({
-      horseName,
-      managerName,
-    }: {
-      horseName?: string
-      managerName?: string
-    }) {
+    prepare({horseName, managerName}) {
       return {
         title: horseName || 'Andelshest',
         subtitle: managerName ? `Bestyrer: ${managerName}` : '',
