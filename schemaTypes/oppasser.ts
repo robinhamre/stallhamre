@@ -15,6 +15,23 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
 
+    // 🖼️ NYTT FELT
+    defineField({
+      name: 'image',
+      title: 'Bilde',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        {
+          name: 'alt',
+          title: 'Alt-tekst',
+          type: 'string',
+        },
+      ],
+    }),
+
     defineField({
       name: 'description',
       title: 'Beskrivelse',
@@ -44,12 +61,14 @@ export default defineType({
   preview: {
     select: {
       name: 'staff.name',
+      media: 'image',
       subtitle: 'horses',
     },
-    prepare({name, subtitle}: {name?: string; subtitle?: string}) {
+    prepare({name, subtitle, media}: {name?: string; subtitle?: string; media?: any}) {
       return {
         title: name || 'Oppasser',
         subtitle: subtitle || '',
+        media,
       }
     },
   },
