@@ -112,6 +112,15 @@ export default defineType({
         }),
     }),
 
+    // 👇 NYTT FELT (Oppasser)
+    defineField({
+      name: 'caretaker',
+      title: 'Oppasser',
+      type: 'reference',
+      to: [{ type: 'oppasser' }],
+      description: 'Velg oppasser for hesten',
+    }),
+
     defineField({
       name: 'birthYear',
       title: 'Fødselsår',
