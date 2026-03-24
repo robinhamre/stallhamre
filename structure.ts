@@ -57,7 +57,15 @@ export const structure = (S: StructureBuilder) =>
               S.documentTypeListItem('oppasser').title('Oppassere'),
               S.documentTypeListItem('supplier').title('Leverandør'),
               S.documentTypeListItem('invoice').title('Viderefakturering'),
-              S.documentTypeListItem('mattilsynet').title('Mattilsynet'),
+
+              // Singleton: åpner direkte inn i registeret
+              S.listItem()
+                .title('Mattilsynet')
+                .child(
+                  S.document()
+                    .schemaType('mattilsynet')
+                    .documentId('mattilsynet-register')
+                ),
             ])
         ),
 
