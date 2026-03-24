@@ -22,6 +22,7 @@ import supplier from './supplier'
 import invoice from './invoice'
 import yearStatsHistoric from './yearStatsHistoric'
 import andelshest from './andelshest'
+import mattilsynet from './mattilsynet'
 
 export const schemaTypes = [
   category,
@@ -46,4 +47,5 @@ export const schemaTypes = [
   invoice,
   yearStatsHistoric,
   andelshest,
+  mattilsynet,
 ]

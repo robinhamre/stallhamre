@@ -57,6 +57,7 @@ export const structure = (S: StructureBuilder) =>
               S.documentTypeListItem('oppasser').title('Oppassere'),
               S.documentTypeListItem('supplier').title('Leverandør'),
               S.documentTypeListItem('invoice').title('Viderefakturering'),
+              S.documentTypeListItem('mattilsynet').title('Mattilsynet'),
             ])
         ),
 
