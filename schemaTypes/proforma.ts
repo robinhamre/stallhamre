@@ -17,16 +17,29 @@ export default defineType({
     }),
 
     defineField({
-      name: 'senders',
-      title: 'Avsendere',
+      name: 'parties',
+      title: 'Register',
       type: 'array',
-      description: 'Lagrede avsendere for proforma.',
+      description: 'Lagrede selskaper og privatpersoner som kan brukes som avsender eller mottaker.',
       of: [
         {
           type: 'object',
-          name: 'senderItem',
-          title: 'Avsender',
+          name: 'partyItem',
+          title: 'Oppføring',
           fields: [
+            {
+              name: 'partyType',
+              title: 'Type',
+              type: 'string',
+              options: {
+                list: [
+                  {title: 'Selskap', value: 'company'},
+                  {title: 'Privatperson', value: 'person'},
+                ],
+                layout: 'radio',
+              },
+              validation: (Rule: any) => Rule.required(),
+            },
             {
               name: 'name',
               title: 'Navn',
@@ -55,98 +68,50 @@ export default defineType({
               type: 'string',
             },
             {
-              name: 'organizationNumber',
+              name: 'phone',
+              title: 'Telefon',
+              type: 'string',
+            },
+            {
+              name: 'idNumber',
               title: 'Personnummer / org-nummer',
               type: 'string',
+            },
+            {
+              name: 'notes',
+              title: 'Notat',
+              type: 'text',
+              rows: 3,
             },
           ],
           preview: {
             select: {
               title: 'name',
+              partyType: 'partyType',
               postalPlace: 'postalPlace',
-              organizationNumber: 'organizationNumber',
+              idNumber: 'idNumber',
             },
             prepare({
               title,
+              partyType,
               postalPlace,
-              organizationNumber,
+              idNumber,
             }: {
               title?: string
+              partyType?: string
               postalPlace?: string
-              organizationNumber?: string
+              idNumber?: string
             }) {
-              return {
-                title: title || 'Avsender',
-                subtitle: [postalPlace, organizationNumber].filter(Boolean).join(' • '),
-              }
-            },
-          },
-        },
-      ],
-    }),
+              const typeLabel =
+                partyType === 'company'
+                  ? 'Selskap'
+                  : partyType === 'person'
+                    ? 'Privatperson'
+                    : ''
 
-    defineField({
-      name: 'recipients',
-      title: 'Mottakere',
-      type: 'array',
-      description: 'Lagrede mottakere for proforma.',
-      of: [
-        {
-          type: 'object',
-          name: 'recipientItem',
-          title: 'Mottaker',
-          fields: [
-            {
-              name: 'name',
-              title: 'Navn',
-              type: 'string',
-              validation: (Rule: any) => Rule.required(),
-            },
-            {
-              name: 'address',
-              title: 'Adresse',
-              type: 'string',
-              validation: (Rule: any) => Rule.required(),
-            },
-            {
-              name: 'postalCode',
-              title: 'Postnummer',
-              type: 'string',
-            },
-            {
-              name: 'postalPlace',
-              title: 'Poststed',
-              type: 'string',
-            },
-            {
-              name: 'email',
-              title: 'E-post',
-              type: 'string',
-            },
-            {
-              name: 'organizationNumber',
-              title: 'Personnummer / org-nummer',
-              type: 'string',
-            },
-          ],
-          preview: {
-            select: {
-              title: 'name',
-              postalPlace: 'postalPlace',
-              organizationNumber: 'organizationNumber',
-            },
-            prepare({
-              title,
-              postalPlace,
-              organizationNumber,
-            }: {
-              title?: string
-              postalPlace?: string
-              organizationNumber?: string
-            }) {
               return {
-                title: title || 'Mottaker',
-                subtitle: [postalPlace, organizationNumber].filter(Boolean).join(' • '),
+                title: title || 'Oppføring',
+                subtitle: [typeLabel, postalPlace, idNumber].filter(Boolean).join(' • '),
               }
             },
           },
@@ -162,7 +127,7 @@ export default defineType({
     prepare({title}: {title?: string}) {
       return {
         title: title || 'Proforma',
-        subtitle: 'Register for avsendere og mottakere',
+        subtitle: 'Felles register for selskaper og privatpersoner',
       }
     },
   },
