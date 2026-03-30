@@ -24,88 +24,111 @@ export default defineType({
           {title: 'Kjøpskontrakt', value: 'kjopskontrakt'},
           {title: 'Oppdragsavtale', value: 'oppdragsavtale'},
         ],
-        layout: 'dropdown',
       },
       validation: (Rule) => Rule.required(),
     }),
 
+    // 👇 FELLES PARTREGISTER
     defineField({
-      name: 'description',
-      title: 'Beskrivelse',
-      type: 'text',
-      rows: 3,
-      description: 'Valgfri intern beskrivelse av hva malen brukes til.',
+      name: 'partyRegister',
+      title: 'Part-register',
+      description: 'Opprett personer/selskaper som kan brukes i kontrakter',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          name: 'party',
+          title: 'Part',
+          fields: [
+            {name: 'name', title: 'Navn', type: 'string'},
+            {name: 'address', title: 'Adresse', type: 'string'},
+            {name: 'postalCode', title: 'Postnummer', type: 'string'},
+            {name: 'postalPlace', title: 'Poststed', type: 'string'},
+            {name: 'email', title: 'E-post', type: 'string'},
+            {name: 'phone', title: 'Telefon', type: 'string'},
+            {name: 'idNumber', title: 'Person/org.nr', type: 'string'},
+            {name: 'accountNumber', title: 'Kontonummer', type: 'string'},
+          ],
+          preview: {
+            select: {
+              title: 'name',
+              subtitle: 'postalPlace',
+            },
+          },
+        },
+      ],
     }),
 
+    // 👇 PARTER (bruker register)
+    defineField({
+      name: 'parties',
+      title: 'Parter',
+      type: 'array',
+      description: 'Velg hvilke parter som inngår i kontrakten',
+      of: [
+        {
+          type: 'reference',
+          to: [{type: 'kontraktmal'}], // ⚠️ workaround fjernes under forklaring
+        },
+      ],
+      hidden: true,
+    }),
+
+    // 👇 ANDRE PARTER (riktig løsning)
+    defineField({
+      name: 'selectedParties',
+      title: 'Parter',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'party',
+              title: 'Part',
+              type: 'reference',
+              to: [{type: 'partyInline'}],
+            },
+          ],
+        },
+      ],
+      hidden: true,
+    }),
+
+    // 👇 TREDJEPART (kun andelskontrakt)
+    defineField({
+      name: 'thirdParty',
+      title: 'Sportslig og økonomisk ansvarlig tredjepart',
+      type: 'object',
+      hidden: ({document}) => document?.contractType !== 'andelskontrakt',
+      fields: [
+        {name: 'name', title: 'Navn', type: 'string'},
+        {name: 'address', title: 'Adresse', type: 'string'},
+        {name: 'email', title: 'E-post', type: 'string'},
+        {name: 'phone', title: 'Telefon', type: 'string'},
+      ],
+    }),
+
+    // 👇 SEKSJONER (som før)
     defineField({
       name: 'sections',
-      title: 'Innhold / punkter',
+      title: 'Innhold',
       type: 'array',
-      description:
-        'Legg til så mange punkter du vil. Du kan bruke nummerering som 1, 2, 6, 6.1, 6.2 osv.',
       of: [
         {
           type: 'object',
           name: 'textSection',
           title: 'Tekstpunkt',
           fields: [
-            defineField({
-              name: 'number',
-              title: 'Punktnummer',
-              type: 'string',
-              description: 'F.eks. 1, 2, 6, 6.1, 6.2',
-            }),
-            defineField({
-              name: 'heading',
-              title: 'Overskrift',
-              type: 'string',
-            }),
-            defineField({
+            {name: 'number', title: 'Punktnummer', type: 'string'},
+            {name: 'heading', title: 'Overskrift', type: 'string'},
+            {
               name: 'content',
               title: 'Innhold',
               type: 'array',
-              of: [
-                {
-                  type: 'block',
-                  styles: [{title: 'Normal', value: 'normal'}],
-                  lists: [{title: 'Bullet', value: 'bullet'}],
-                  marks: {
-                    decorators: [
-                      {title: 'Bold', value: 'strong'},
-                      {title: 'Italic', value: 'em'},
-                      {title: 'Underline', value: 'underline'},
-                    ],
-                    annotations: [
-                      {
-                        name: 'link',
-                        title: 'Lenke',
-                        type: 'object',
-                        fields: [
-                          {
-                            name: 'href',
-                            title: 'URL',
-                            type: 'url',
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                },
-              ],
-            }),
+              of: [{type: 'block'}],
+            },
           ],
-          preview: {
-            select: {
-              number: 'number',
-              heading: 'heading',
-            },
-            prepare({number, heading}: {number?: string; heading?: string}) {
-              return {
-                title: heading || 'Tekstpunkt',
-                subtitle: number ? `Punkt ${number}` : 'Uten nummer',
-              }
-            },
-          },
         },
 
         {
@@ -113,41 +136,9 @@ export default defineType({
           name: 'tableSection',
           title: 'Tabell',
           fields: [
-            defineField({
-              name: 'number',
-              title: 'Punktnummer',
-              type: 'string',
-              description: 'F.eks. 4 eller 6.1',
-            }),
-            defineField({
-              name: 'heading',
-              title: 'Overskrift',
-              type: 'string',
-            }),
-            defineField({
-              name: 'columns',
-              title: 'Kolonner',
-              type: 'array',
-              of: [
-                {
-                  type: 'object',
-                  name: 'columnItem',
-                  title: 'Kolonne',
-                  fields: [
-                    {
-                      name: 'title',
-                      title: 'Kolonnenavn',
-                      type: 'string',
-                    },
-                  ],
-                  preview: {
-                    select: {
-                      title: 'title',
-                    },
-                  },
-                },
-              ],
-            }),
+            {name: 'number', title: 'Punktnummer', type: 'string'},
+            {name: 'heading', title: 'Overskrift', type: 'string'},
+
             defineField({
               name: 'rows',
               title: 'Rader',
@@ -155,47 +146,18 @@ export default defineType({
               of: [
                 {
                   type: 'object',
-                  name: 'rowItem',
-                  title: 'Rad',
                   fields: [
                     {
                       name: 'cells',
                       title: 'Celler',
                       type: 'array',
-                      of: [
-                        {
-                          type: 'string',
-                        },
-                      ],
+                      of: [{type: 'string'}],
                     },
                   ],
-                  preview: {
-                    select: {
-                      cells: 'cells',
-                    },
-                    prepare({cells}: {cells?: string[]}) {
-                      return {
-                        title: 'Rad',
-                        subtitle: cells?.join(' | ') || '',
-                      }
-                    },
-                  },
                 },
               ],
             }),
           ],
-          preview: {
-            select: {
-              number: 'number',
-              heading: 'heading',
-            },
-            prepare({number, heading}: {number?: string; heading?: string}) {
-              return {
-                title: heading || 'Tabell',
-                subtitle: number ? `Punkt ${number}` : 'Tabell',
-              }
-            },
-          },
         },
       ],
     }),
@@ -206,25 +168,10 @@ export default defineType({
       title: 'title',
       contractType: 'contractType',
     },
-    prepare({
-      title,
-      contractType,
-    }: {
-      title?: string
-      contractType?: string
-    }) {
-      const label =
-        contractType === 'andelskontrakt'
-          ? 'Andelskontrakt'
-          : contractType === 'kjopskontrakt'
-            ? 'Kjøpskontrakt'
-            : contractType === 'oppdragsavtale'
-              ? 'Oppdragsavtale'
-              : ''
-
+    prepare({title, contractType}) {
       return {
-        title: title || 'Kontraktsmal',
-        subtitle: label,
+        title,
+        subtitle: contractType,
       }
     },
   },
