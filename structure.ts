@@ -44,6 +44,14 @@ export const structure = (S: StructureBuilder) =>
               S.documentTypeListItem('shareOffer').title('Andelstilbud'),
               S.documentTypeListItem('shareManager').title('Andelsbestyrer'),
               S.documentTypeListItem('andelshest').title('Andelshester'),
+
+              S.listItem()
+                .title('Andelsfaktura (Kjøp)')
+                .child(
+                  S.document()
+                    .schemaType('andelskjop')
+                    .documentId('andelskjop-register')
+                ),
             ])
         ),
 
