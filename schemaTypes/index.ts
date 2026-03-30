@@ -23,6 +23,7 @@ import invoice from './invoice'
 import yearStatsHistoric from './yearStatsHistoric'
 import andelshest from './andelshest'
 import mattilsynet from './mattilsynet'
+import proforma from './proforma'
 
 export const schemaTypes = [
   category,
@@ -48,4 +49,5 @@ export const schemaTypes = [
   yearStatsHistoric,
   andelshest,
   mattilsynet,
+  proforma,
 ]

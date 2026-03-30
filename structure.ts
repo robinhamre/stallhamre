@@ -58,13 +58,20 @@ export const structure = (S: StructureBuilder) =>
               S.documentTypeListItem('supplier').title('Leverandør'),
               S.documentTypeListItem('invoice').title('Viderefakturering'),
 
-              // Singleton: åpner direkte inn i registeret
               S.listItem()
                 .title('Mattilsynet')
                 .child(
                   S.document()
                     .schemaType('mattilsynet')
                     .documentId('mattilsynet-register')
+                ),
+
+              S.listItem()
+                .title('Proforma')
+                .child(
+                  S.document()
+                    .schemaType('proforma')
+                    .documentId('proforma-register')
                 ),
             ])
         ),
