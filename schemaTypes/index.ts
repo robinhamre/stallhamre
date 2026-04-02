@@ -26,6 +26,7 @@ import mattilsynet from './mattilsynet'
 import proforma from './proforma'
 import andelskjop from './andelskjop'
 import kontraktmal from './kontraktmal'
+import fillager from './fillager'
 
 export const schemaTypes = [
   category,
@@ -54,4 +55,5 @@ export const schemaTypes = [
   proforma,
   andelskjop,
   kontraktmal,
+  fillager,
 ]
