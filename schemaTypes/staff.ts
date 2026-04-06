@@ -1,16 +1,17 @@
-cat > staff.ts <<'EOF'
 import {defineField, defineType} from 'sanity'
 
 export default defineType({
   name: 'staff',
   title: 'Personal',
   type: 'document',
+
   groups: [
     {name: 'basic', title: 'Grunninfo', default: true},
     {name: 'contact', title: 'Kontakt'},
     {name: 'payroll', title: 'Lønnsinfo'},
     {name: 'visibility', title: 'Synlighet'},
   ],
+
   fields: [
     defineField({
       name: 'name',
@@ -88,7 +89,6 @@ export default defineType({
       title: 'Personnummer',
       type: 'string',
       group: 'payroll',
-      description: 'Lagres for lønnsarbeid. Vurder tilgangsstyring i studio siden dette er sensitiv informasjon.',
     }),
 
     defineField({
@@ -119,7 +119,6 @@ export default defineType({
       type: 'boolean',
       group: 'visibility',
       initialValue: true,
-      description: 'Skru av for å skjule personen fra nettsiden',
     }),
   ],
 
@@ -137,4 +136,3 @@ export default defineType({
     },
   },
 })
-EOF

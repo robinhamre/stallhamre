@@ -1,4 +1,3 @@
-cat > index.ts <<'EOF'
 import category from './category'
 import horse from './horse'
 import driver from './driver'
@@ -58,4 +57,3 @@ export const schemaTypes = [
   fillager,
   lonnsliste,
 ]
-EOF

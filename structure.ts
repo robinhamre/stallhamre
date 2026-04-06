@@ -1,4 +1,3 @@
-cat > structure.ts <<'EOF'
 import {StructureBuilder} from 'sanity/structure'
 
 const CURRENT_YEAR = new Date().getFullYear()
@@ -28,7 +27,6 @@ const payrollMonthItems = (S: StructureBuilder, year: number) =>
           .filter('_type == "lonnsliste" && year == $year && month == $month')
           .params({year, month: month.value})
           .defaultOrdering([
-            {field: 'employee.name', direction: 'asc'},
             {field: 'year', direction: 'desc'},
             {field: 'month', direction: 'desc'},
           ])
@@ -113,7 +111,6 @@ export const structure = (S: StructureBuilder) =>
                             .params({year: CURRENT_YEAR})
                             .defaultOrdering([
                               {field: 'month', direction: 'desc'},
-                              {field: 'employee.name', direction: 'asc'},
                             ])
                         ),
 
@@ -173,4 +170,3 @@ export const structure = (S: StructureBuilder) =>
             ])
         ),
     ])
-EOF
