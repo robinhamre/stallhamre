@@ -1,5 +1,39 @@
 import {StructureBuilder} from 'sanity/structure'
 
+const CURRENT_YEAR = new Date().getFullYear()
+
+const MONTHS = [
+  {title: 'Januar', value: '01'},
+  {title: 'Februar', value: '02'},
+  {title: 'Mars', value: '03'},
+  {title: 'April', value: '04'},
+  {title: 'Mai', value: '05'},
+  {title: 'Juni', value: '06'},
+  {title: 'Juli', value: '07'},
+  {title: 'August', value: '08'},
+  {title: 'September', value: '09'},
+  {title: 'Oktober', value: '10'},
+  {title: 'November', value: '11'},
+  {title: 'Desember', value: '12'},
+] as const
+
+const payrollMonthItems = (S: StructureBuilder, year: number) =>
+  MONTHS.map((month) =>
+    S.listItem()
+      .title(month.title)
+      .child(
+        S.documentTypeList('lonnsliste')
+          .title(`${month.title} ${year}`)
+          .filter('_type == "lonnsliste" && year == $year && month == $month')
+          .params({year, month: month.value})
+          .defaultOrdering([
+            {field: 'employee.name', direction: 'asc'},
+            {field: 'year', direction: 'desc'},
+            {field: 'month', direction: 'desc'},
+          ])
+      )
+  )
+
 export const structure = (S: StructureBuilder) =>
   S.list()
     .title('Content')
@@ -62,6 +96,38 @@ export const structure = (S: StructureBuilder) =>
             .title('Administrasjon')
             .items([
               S.documentTypeListItem('staff').title('Personal'),
+
+              S.listItem()
+                .title('Lønnslister')
+                .child(
+                  S.list()
+                    .title('Lønnslister')
+                    .items([
+                      S.listItem()
+                        .title(`Alle lønnslister (${CURRENT_YEAR})`)
+                        .child(
+                          S.documentTypeList('lonnsliste')
+                            .title(`Alle lønnslister (${CURRENT_YEAR})`)
+                            .filter('_type == "lonnsliste" && year == $year')
+                            .params({year: CURRENT_YEAR})
+                            .defaultOrdering([
+                              {field: 'month', direction: 'desc'},
+                              {field: 'employee.name', direction: 'asc'},
+                            ])
+                        ),
+
+                      S.listItem()
+                        .title(`${CURRENT_YEAR} per måned`)
+                        .child(
+                          S.list()
+                            .title(`${CURRENT_YEAR} per måned`)
+                            .items(payrollMonthItems(S, CURRENT_YEAR))
+                        ),
+
+                      S.documentTypeListItem('lonnsliste').title('Alle år'),
+                    ])
+                ),
+
               S.documentTypeListItem('oppasser').title('Oppassere'),
               S.documentTypeListItem('supplier').title('Leverandør'),
               S.documentTypeListItem('invoice').title('Viderefakturering'),

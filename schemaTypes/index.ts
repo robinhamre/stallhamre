@@ -1,5 +1,3 @@
-// schemaTypes/index.ts
-
 import category from './category'
 import horse from './horse'
 import driver from './driver'
@@ -27,6 +25,7 @@ import proforma from './proforma'
 import andelskjop from './andelskjop'
 import kontraktmal from './kontraktmal'
 import fillager from './fillager'
+import lonnsliste from './lonnsliste'
 
 export const schemaTypes = [
   category,
@@ -56,4 +55,5 @@ export const schemaTypes = [
   andelskjop,
   kontraktmal,
   fillager,
+  lonnsliste,
 ]
