@@ -1,1 +1,61 @@
-...
+cat > index.ts <<'EOF'
+import category from './category'
+import horse from './horse'
+import driver from './driver'
+import track from './track'
+import imageLibrary from './imageLibrary'
+import post from './post'
+import tips from './tips'
+import tipsCategory from './tipsCategory'
+import staff from './staff'
+import oppasser from './oppasser'
+import shareOffer from './shareOffer'
+import shareManager from './shareManager'
+import shareOwner from './shareOwner'
+import result from './result'
+import resultCategory from './resultCategory'
+import reportage from './reportage'
+import reportageCategory from './reportageCategory'
+import owner from './owner'
+import supplier from './supplier'
+import invoice from './invoice'
+import yearStatsHistoric from './yearStatsHistoric'
+import andelshest from './andelshest'
+import mattilsynet from './mattilsynet'
+import proforma from './proforma'
+import andelskjop from './andelskjop'
+import kontraktmal from './kontraktmal'
+import fillager from './fillager'
+import lonnsliste from './lonnsliste'
+
+export const schemaTypes = [
+  category,
+  horse,
+  driver,
+  track,
+  imageLibrary,
+  post,
+  tips,
+  tipsCategory,
+  staff,
+  oppasser,
+  shareOffer,
+  shareManager,
+  shareOwner,
+  result,
+  resultCategory,
+  reportage,
+  reportageCategory,
+  owner,
+  supplier,
+  invoice,
+  yearStatsHistoric,
+  andelshest,
+  mattilsynet,
+  proforma,
+  andelskjop,
+  kontraktmal,
+  fillager,
+  lonnsliste,
+]
+EOF
