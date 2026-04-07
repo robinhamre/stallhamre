@@ -39,6 +39,14 @@ export default defineType({
     }),
 
     defineField({
+      name: 'description',
+      title: 'Beskrivelse',
+      type: 'text',
+      group: 'basic',
+      rows: 4,
+    }),
+
+    defineField({
       name: 'role',
       title: 'Stilling',
       type: 'string',
