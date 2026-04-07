@@ -1,4 +1,3 @@
-// schemaTypes/horse.ts
 import { defineField, defineType } from 'sanity'
 
 export default defineType({
@@ -25,7 +24,6 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
 
-    // 🆕 ULEN
     defineField({
       name: 'ulen',
       title: 'ULEN (Regnr)',
@@ -112,13 +110,12 @@ export default defineType({
         }),
     }),
 
-    // 👇 NYTT FELT (Oppasser)
     defineField({
       name: 'caretaker',
       title: 'Oppasser',
       type: 'reference',
-      to: [{ type: 'oppasser' }],
-      description: 'Velg oppasser for hesten',
+      to: [{ type: 'staff' }],
+      description: 'Velg oppasser for hesten fra Personal-registeret.',
     }),
 
     defineField({
@@ -138,8 +135,6 @@ export default defineType({
       title: 'Stamme',
       type: 'string',
     }),
-
-    // 🧬 SLEKT
 
     defineField({ name: 'sire', title: 'Far', type: 'string' }),
     defineField({ name: 'dam', title: 'Mor', type: 'string' }),

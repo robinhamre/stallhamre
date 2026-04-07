@@ -22,6 +22,23 @@ export default defineType({
     }),
 
     defineField({
+      name: 'image',
+      title: 'Bilde',
+      type: 'image',
+      group: 'basic',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt-tekst',
+          type: 'string',
+        }),
+      ],
+    }),
+
+    defineField({
       name: 'role',
       title: 'Stilling',
       type: 'string',
@@ -38,6 +55,7 @@ export default defineType({
           {title: 'Trener / kusk', value: 'trainerDriver'},
           {title: 'Stallpersonell', value: 'stableStaff'},
           {title: 'Ekstrahjelp / vikar', value: 'temporaryWorker'},
+          {title: 'Andelskontakt', value: 'shareContact'},
         ],
       },
     }),
@@ -99,6 +117,28 @@ export default defineType({
     }),
 
     defineField({
+      name: 'employeeNumber',
+      title: 'Ansattnummer',
+      type: 'string',
+      group: 'payroll',
+    }),
+
+    defineField({
+      name: 'employmentPercentage',
+      title: 'Stillingsprosent',
+      type: 'number',
+      group: 'payroll',
+      validation: (Rule) => Rule.min(0).max(100),
+    }),
+
+    defineField({
+      name: 'startDate',
+      title: 'Startdato',
+      type: 'date',
+      group: 'payroll',
+    }),
+
+    defineField({
       name: 'defaultFastlonn',
       title: 'Standard fastlønn',
       type: 'number',
@@ -127,11 +167,13 @@ export default defineType({
       title: 'name',
       subtitle: 'role',
       visible: 'visible',
+      media: 'image',
     },
-    prepare({title, subtitle, visible}) {
+    prepare({title, subtitle, visible, media}) {
       return {
         title,
         subtitle: `${subtitle || ''} ${visible === false ? '🚫 Skjult' : ''}`.trim(),
+        media,
       }
     },
   },
