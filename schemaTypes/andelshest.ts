@@ -21,16 +21,15 @@ export default defineType({
   title: 'Andelshester',
   type: 'document',
 
-  // 🔥 NYTT: GRUPPER
   groups: [
     {name: 'basic', title: 'Grunnleggende', default: true},
     {name: 'income', title: 'Inntekter'},
     {name: 'expenses', title: 'Utgifter'},
     {name: 'updates', title: 'Oppdateringer'},
+    {name: 'raceComments', title: 'Løpskommentar'},
   ],
 
   fields: [
-    // 🔹 GRUNNLEGGENDE
     defineField({
       name: 'horse',
       title: 'Hest',
@@ -57,7 +56,6 @@ export default defineType({
       group: 'basic',
     }),
 
-    // 🔹 INNTEKTER
     defineField({
       name: 'payoutNotices',
       title: 'Utbetalingsbeskjeder',
@@ -69,23 +67,77 @@ export default defineType({
           name: 'payoutNoticeItem',
           title: 'Utbetaling',
           fields: [
-            {name: 'supplier', title: 'Leverandør', type: 'reference', to: [{type: 'supplier'}]},
-            {name: 'year', title: 'År', type: 'number'},
+            {
+              name: 'supplier',
+              title: 'Leverandør',
+              type: 'reference',
+              to: [{type: 'supplier'}],
+            },
+            {
+              name: 'year',
+              title: 'År',
+              type: 'number',
+            },
             {
               name: 'month',
               title: 'Periode',
               type: 'string',
-              options: {list: months, layout: 'dropdown'},
+              options: {
+                list: months,
+                layout: 'dropdown',
+              },
             },
-            {name: 'invoiceNumber', title: 'Fakturanummer', type: 'string'},
-            {name: 'amount', title: 'Netto sum til utbetaling', type: 'number'},
+            {
+              name: 'invoiceNumber',
+              title: 'Fakturanummer',
+              type: 'string',
+            },
+            {
+              name: 'amount',
+              title: 'Netto sum til utbetaling',
+              type: 'number',
+            },
             {
               name: 'pdf',
               title: 'PDF',
               type: 'file',
-              options: {accept: 'application/pdf'},
+              options: {
+                accept: 'application/pdf',
+              },
             },
           ],
+          preview: {
+            select: {
+              supplierName: 'supplier.name',
+              year: 'year',
+              month: 'month',
+              amount: 'amount',
+            },
+            prepare({
+              supplierName,
+              year,
+              month,
+              amount,
+            }: {
+              supplierName?: string
+              year?: number
+              month?: string
+              amount?: number
+            }) {
+              const monthLabel = months.find((m) => m.value === month)?.title || month || ''
+              const amountLabel =
+                typeof amount === 'number'
+                  ? `${amount.toLocaleString('nb-NO')} kr`
+                  : ''
+
+              return {
+                title: supplierName || 'Utbetaling',
+                subtitle: [monthLabel, year?.toString(), amountLabel]
+                  .filter(Boolean)
+                  .join(' • '),
+              }
+            },
+          },
         },
       ],
     }),
@@ -101,29 +153,79 @@ export default defineType({
           name: 'incomeItem',
           title: 'Inntekt',
           fields: [
-            {name: 'supplier', title: 'Leverandør', type: 'reference', to: [{type: 'supplier'}]},
-            {name: 'title', title: 'Beskrivelse', type: 'string'},
-            {name: 'year', title: 'År', type: 'number'},
+            {
+              name: 'supplier',
+              title: 'Leverandør',
+              type: 'reference',
+              to: [{type: 'supplier'}],
+            },
+            {
+              name: 'title',
+              title: 'Beskrivelse',
+              type: 'string',
+            },
+            {
+              name: 'year',
+              title: 'År',
+              type: 'number',
+            },
             {
               name: 'month',
               title: 'Periode',
               type: 'string',
-              options: {list: months},
+              options: {
+                list: months,
+              },
             },
-            {name: 'invoiceNumber', title: 'Fakturanummer', type: 'string'},
-            {name: 'amount', title: 'Netto sum', type: 'number'},
+            {
+              name: 'invoiceNumber',
+              title: 'Fakturanummer',
+              type: 'string',
+            },
+            {
+              name: 'amount',
+              title: 'Netto sum',
+              type: 'number',
+            },
             {
               name: 'pdf',
               title: 'PDF',
               type: 'file',
-              options: {accept: 'application/pdf'},
+              options: {
+                accept: 'application/pdf',
+              },
             },
           ],
+          preview: {
+            select: {
+              supplierName: 'supplier.name',
+              title: 'title',
+              amount: 'amount',
+            },
+            prepare({
+              supplierName,
+              title,
+              amount,
+            }: {
+              supplierName?: string
+              title?: string
+              amount?: number
+            }) {
+              const amountLabel =
+                typeof amount === 'number'
+                  ? `${amount.toLocaleString('nb-NO')} kr`
+                  : ''
+
+              return {
+                title: title || supplierName || 'Inntekt',
+                subtitle: [supplierName, amountLabel].filter(Boolean).join(' • '),
+              }
+            },
+          },
         },
       ],
     }),
 
-    // 🔹 UTGIFTER
     defineField({
       name: 'invoices',
       title: 'Faktura',
@@ -135,24 +237,96 @@ export default defineType({
           name: 'invoiceItem',
           title: 'Faktura',
           fields: [
-            {name: 'supplier', title: 'Leverandør', type: 'reference', to: [{type: 'supplier'}]},
-            {name: 'invoiceNumber', title: 'Fakturanummer', type: 'string'},
-            {name: 'invoiceDate', title: 'Fakturadato', type: 'date'},
-            {name: 'month', title: 'Periode', type: 'string', options: {list: months}},
-            {name: 'year', title: 'År', type: 'number'},
-            {name: 'total', title: 'Totalsum inkl. mva', type: 'number'},
+            {
+              name: 'supplier',
+              title: 'Leverandør',
+              type: 'reference',
+              to: [{type: 'supplier'}],
+            },
+            {
+              name: 'invoiceNumber',
+              title: 'Fakturanummer',
+              type: 'string',
+            },
+            {
+              name: 'invoiceDate',
+              title: 'Fakturadato',
+              type: 'date',
+            },
+            {
+              name: 'month',
+              title: 'Periode',
+              type: 'string',
+              options: {
+                list: months,
+              },
+            },
+            {
+              name: 'year',
+              title: 'År',
+              type: 'number',
+            },
+            {
+              name: 'total',
+              title: 'Totalsum inkl. mva',
+              type: 'number',
+            },
             {
               name: 'mainPdf',
               title: 'Hovedfaktura PDF',
               type: 'file',
-              options: {accept: 'application/pdf'},
+              options: {
+                accept: 'application/pdf',
+              },
+            },
+            {
+              name: 'attachments',
+              title: 'Vedlegg',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  name: 'attachmentItem',
+                  title: 'Vedlegg',
+                  fields: [
+                    {
+                      name: 'supplier',
+                      title: 'Leverandør',
+                      type: 'reference',
+                      to: [{type: 'supplier'}],
+                    },
+                    {
+                      name: 'invoiceNumber',
+                      title: 'Fakturanummer',
+                      type: 'string',
+                    },
+                    {
+                      name: 'invoiceDate',
+                      title: 'Fakturadato',
+                      type: 'date',
+                    },
+                    {
+                      name: 'amount',
+                      title: 'Sum inkl. mva',
+                      type: 'number',
+                    },
+                    {
+                      name: 'pdf',
+                      title: 'PDF',
+                      type: 'file',
+                      options: {
+                        accept: 'application/pdf',
+                      },
+                    },
+                  ],
+                },
+              ],
             },
           ],
         },
       ],
     }),
 
-    // 🔹 OPPDATERINGER
     defineField({
       name: 'updates',
       title: 'Oppdateringer',
@@ -164,10 +338,26 @@ export default defineType({
           name: 'youtubeUpdate',
           title: 'YouTube',
           fields: [
-            {name: 'title', title: 'Overskrift', type: 'string'},
-            {name: 'description', title: 'Beskrivelse', type: 'text'},
-            {name: 'youtubeUrl', title: 'YouTube link', type: 'url'},
-            {name: 'date', title: 'Dato', type: 'date'},
+            {
+              name: 'title',
+              title: 'Overskrift',
+              type: 'string',
+            },
+            {
+              name: 'description',
+              title: 'Beskrivelse',
+              type: 'text',
+            },
+            {
+              name: 'youtubeUrl',
+              title: 'YouTube link',
+              type: 'url',
+            },
+            {
+              name: 'date',
+              title: 'Dato',
+              type: 'date',
+            },
             {
               name: 'author',
               title: 'Forfatter',
@@ -175,16 +365,47 @@ export default defineType({
               to: [{type: 'staff'}, {type: 'shareManager'}],
             },
           ],
+          preview: {
+            select: {
+              title: 'title',
+              date: 'date',
+              authorName: 'author.name',
+            },
+            prepare({title, date, authorName}: {title?: string; date?: string; authorName?: string}) {
+              return {
+                title: title || 'YouTube',
+                subtitle: [date, authorName].filter(Boolean).join(' • '),
+              }
+            },
+          },
         },
+
         {
           type: 'object',
-          name: 'trainingReport',
-          title: 'Treningsrapport',
+          name: 'imageMessage',
+          title: 'Bildemelding',
           fields: [
-            {name: 'title', title: 'Overskrift', type: 'string'},
-            {name: 'description', title: 'Beskrivelse', type: 'text'},
-            {name: 'images', title: 'Bilder', type: 'array', of: [{type: 'image'}]},
-            {name: 'date', title: 'Dato', type: 'date'},
+            {
+              name: 'title',
+              title: 'Overskrift',
+              type: 'string',
+            },
+            {
+              name: 'description',
+              title: 'Beskrivelse',
+              type: 'text',
+            },
+            {
+              name: 'images',
+              title: 'Bilder',
+              type: 'array',
+              of: [{type: 'image'}],
+            },
+            {
+              name: 'date',
+              title: 'Dato',
+              type: 'date',
+            },
             {
               name: 'author',
               title: 'Forfatter',
@@ -192,6 +413,119 @@ export default defineType({
               to: [{type: 'staff'}, {type: 'shareManager'}],
             },
           ],
+          preview: {
+            select: {
+              title: 'title',
+              date: 'date',
+              authorName: 'author.name',
+            },
+            prepare({title, date, authorName}: {title?: string; date?: string; authorName?: string}) {
+              return {
+                title: title || 'Bildemelding',
+                subtitle: [date, authorName].filter(Boolean).join(' • '),
+              }
+            },
+          },
+        },
+
+        {
+          type: 'object',
+          name: 'textMessage',
+          title: 'Tekstmelding',
+          fields: [
+            {
+              name: 'description',
+              title: 'Melding',
+              type: 'text',
+            },
+            {
+              name: 'date',
+              title: 'Dato',
+              type: 'date',
+            },
+            {
+              name: 'author',
+              title: 'Forfatter',
+              type: 'reference',
+              to: [{type: 'staff'}, {type: 'shareManager'}],
+            },
+          ],
+          preview: {
+            select: {
+              description: 'description',
+              date: 'date',
+              authorName: 'author.name',
+            },
+            prepare({
+              description,
+              date,
+              authorName,
+            }: {
+              description?: string
+              date?: string
+              authorName?: string
+            }) {
+              return {
+                title: description ? description.slice(0, 50) : 'Tekstmelding',
+                subtitle: [date, authorName].filter(Boolean).join(' • '),
+              }
+            },
+          },
+        },
+
+        {
+          type: 'object',
+          name: 'videoMessage',
+          title: 'Videomelding',
+          fields: [
+            {
+              name: 'title',
+              title: 'Overskrift',
+              type: 'string',
+            },
+            {
+              name: 'description',
+              title: 'Beskrivelse',
+              type: 'text',
+            },
+            {
+              name: 'videos',
+              title: 'Videoer',
+              type: 'array',
+              of: [
+                {
+                  type: 'file',
+                  options: {
+                    accept: 'video/*',
+                  },
+                },
+              ],
+            },
+            {
+              name: 'date',
+              title: 'Dato',
+              type: 'date',
+            },
+            {
+              name: 'author',
+              title: 'Forfatter',
+              type: 'reference',
+              to: [{type: 'staff'}, {type: 'shareManager'}],
+            },
+          ],
+          preview: {
+            select: {
+              title: 'title',
+              date: 'date',
+              authorName: 'author.name',
+            },
+            prepare({title, date, authorName}: {title?: string; date?: string; authorName?: string}) {
+              return {
+                title: title || 'Videomelding',
+                subtitle: [date, authorName].filter(Boolean).join(' • '),
+              }
+            },
+          },
         },
       ],
     }),
@@ -200,16 +534,28 @@ export default defineType({
       name: 'raceComments',
       title: 'Løpskommentarer',
       type: 'array',
-      group: 'updates',
+      group: 'raceComments',
       of: [
         {
           type: 'object',
           name: 'raceComment',
           title: 'Kommentar',
           fields: [
-            {name: 'title', title: 'Overskrift', type: 'string'},
-            {name: 'date', title: 'Dato', type: 'date'},
-            {name: 'description', title: 'Beskrivelse', type: 'text'},
+            {
+              name: 'title',
+              title: 'Overskrift',
+              type: 'string',
+            },
+            {
+              name: 'date',
+              title: 'Dato',
+              type: 'date',
+            },
+            {
+              name: 'description',
+              title: 'Beskrivelse',
+              type: 'text',
+            },
             {
               name: 'author',
               title: 'Forfatter',
@@ -217,6 +563,19 @@ export default defineType({
               to: [{type: 'staff'}],
             },
           ],
+          preview: {
+            select: {
+              title: 'title',
+              date: 'date',
+              authorName: 'author.name',
+            },
+            prepare({title, date, authorName}: {title?: string; date?: string; authorName?: string}) {
+              return {
+                title: title || 'Løpskommentar',
+                subtitle: [date, authorName].filter(Boolean).join(' • '),
+              }
+            },
+          },
         },
       ],
     }),
