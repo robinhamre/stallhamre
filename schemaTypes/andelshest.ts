@@ -42,8 +42,8 @@ export default defineType({
       name: 'caretaker',
       title: 'Oppasser',
       type: 'reference',
-      to: [{type: 'oppasser'}],
-      description: 'Velg oppasser for hesten',
+      to: [{type: 'staff'}],
+      description: 'Velg oppasser for hesten fra Personal-registeret.',
     }),
 
     defineField({
