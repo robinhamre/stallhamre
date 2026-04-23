@@ -23,6 +23,7 @@ export default defineType({
 
   groups: [
     {name: 'basic', title: 'Grunnleggende', default: true},
+    {name: 'marketplace', title: 'Andelstorg'},
     {name: 'income', title: 'Inntekter'},
     {name: 'expenses', title: 'Utgifter'},
     {name: 'updates', title: 'Oppdateringer'},
@@ -54,6 +55,86 @@ export default defineType({
       type: 'reference',
       to: [{type: 'staff'}],
       group: 'basic',
+    }),
+
+    defineField({
+      name: 'publishToMarketplace',
+      title: 'Vis på andelstorg',
+      type: 'boolean',
+      group: 'marketplace',
+      initialValue: false,
+      description: 'Skru på hvis hesten skal vises på /andel.',
+    }),
+
+    defineField({
+      name: 'horseFactText',
+      title: 'Faktatekst',
+      type: 'text',
+      group: 'marketplace',
+      rows: 6,
+      description: 'Kort presentasjon av hesten til andelstorget.',
+    }),
+
+    defineField({
+      name: 'videoUrl',
+      title: 'Video-link',
+      type: 'url',
+      group: 'marketplace',
+      description: 'For eksempel YouTube eller Vimeo.',
+    }),
+
+    defineField({
+      name: 'gallery',
+      title: 'Galleri',
+      type: 'array',
+      group: 'marketplace',
+      of: [
+        {
+          type: 'image',
+          options: {hotspot: true},
+        },
+      ],
+    }),
+
+    defineField({
+      name: 'managerComment',
+      title: 'Kommentar fra andelsbestyrer',
+      type: 'text',
+      group: 'marketplace',
+      rows: 5,
+    }),
+
+    defineField({
+      name: 'frodesComment',
+      title: 'Kommentar fra Frode',
+      type: 'text',
+      group: 'marketplace',
+      rows: 5,
+    }),
+
+    defineField({
+      name: 'totalShares',
+      title: 'Totalt antall andeler',
+      type: 'number',
+      group: 'marketplace',
+      description: 'Brukes som visningsgrunnlag på andelstorget.',
+    }),
+
+    defineField({
+      name: 'pricePerShare',
+      title: 'Pris per andel',
+      type: 'number',
+      group: 'marketplace',
+    }),
+
+    defineField({
+      name: 'contractPdf',
+      title: 'Kontrakt PDF',
+      type: 'file',
+      group: 'marketplace',
+      options: {
+        accept: 'application/pdf',
+      },
     }),
 
     defineField({
@@ -585,11 +666,17 @@ export default defineType({
     select: {
       horseName: 'horse.name',
       managerName: 'shareManager.name',
+      marketplace: 'publishToMarketplace',
     },
-    prepare({horseName, managerName}) {
+    prepare({horseName, managerName, marketplace}) {
       return {
         title: horseName || 'Andelshest',
-        subtitle: managerName ? `Bestyrer: ${managerName}` : '',
+        subtitle: [
+          managerName ? `Bestyrer: ${managerName}` : '',
+          marketplace ? 'På andelstorg' : '',
+        ]
+          .filter(Boolean)
+          .join(' • '),
       }
     },
   },
