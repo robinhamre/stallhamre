@@ -149,6 +149,13 @@ export default defineType({
     }),
 
     defineField({
+      name: 'color',
+      title: 'Farge',
+      type: 'string',
+      group: 'basic',
+    }),
+
+    defineField({
       name: 'birthYear',
       title: 'Fødselsår',
       type: 'number',
