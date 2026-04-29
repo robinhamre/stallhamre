@@ -6,93 +6,132 @@ export default defineType({
   title: 'Travbane',
   type: 'document',
 
+  groups: [
+    {name: 'basic', title: 'Grunnleggende', default: true},
+    {name: 'location', title: 'Adresse'},
+    {name: 'pricing', title: 'Oppseling (intern)'},
+  ],
+
   fields: [
     defineField({
       name: 'name',
       title: 'Navn',
       type: 'string',
-      validation: Rule => Rule.required(),
+      group: 'basic',
+      validation: (Rule) => Rule.required(),
     }),
 
     defineField({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
+      group: 'basic',
       options: {
         source: 'name',
         maxLength: 96,
       },
-      validation: Rule => Rule.required(),
+      validation: (Rule) => Rule.required(),
     }),
 
     defineField({
       name: 'abbreviation',
       title: 'Baneforkortelse',
       type: 'string',
-      description: 'For eksempel B for Bjerke, J for Jarlsberg osv.',
+      group: 'basic',
+      description: 'For eksempel B, J, M, F osv.',
     }),
 
+    // ADRESSE
     defineField({
       name: 'address',
       title: 'Adresse',
       type: 'string',
+      group: 'location',
     }),
 
     defineField({
       name: 'postalCode',
       title: 'Postnummer',
       type: 'string',
+      group: 'location',
     }),
 
     defineField({
       name: 'postalPlace',
       title: 'Poststed',
       type: 'string',
+      group: 'location',
     }),
 
     defineField({
       name: 'country',
       title: 'Land',
       type: 'string',
+      group: 'location',
       options: {
         list: [
-          {title: 'Norge', value: 'Norge'},
-          {title: 'Sverige', value: 'Sverige'},
-          {title: 'Danmark', value: 'Danmark'},
-          {title: 'Finland', value: 'Finland'},
-          {title: 'Frankrike', value: 'Frankrike'},
-          {title: 'Andre', value: 'Andre'},
+          {title: 'Norge', value: 'NO'},
+          {title: 'Sverige', value: 'SE'},
+          {title: 'Danmark', value: 'DK'},
+          {title: 'Finland', value: 'FI'},
+          {title: 'Frankrike', value: 'FR'},
+          {title: 'Andre', value: 'OTHER'},
         ],
-        layout: 'radio',
-        direction: 'horizontal',
       },
-      initialValue: 'Norge',
+      initialValue: 'NO',
+    }),
+
+    // 🔥 INTERN OPPSSELINGSPRIS
+    defineField({
+      name: 'internalStartPrice',
+      title: 'Pris på oppseling (intern)',
+      type: 'number',
+      group: 'pricing',
+      description: 'Brukes kun internt til beregning. Vises ikke på nettside.',
     }),
 
     defineField({
+      name: 'vatMode',
+      title: 'MVA',
+      type: 'string',
+      group: 'pricing',
+      options: {
+        list: [
+          {title: 'MVA', value: 'vat'},
+          {title: 'Fritatt mva', value: 'exempt'},
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'vat',
+    }),
+
+    // EKSTRA INFO (valgfritt)
+    defineField({
       name: 'trackLength',
-      title: 'Banelengde',
+      title: 'Banelengde (meter)',
       type: 'number',
-      description: 'Meter (f.eks. 1000)',
+      group: 'basic',
     }),
 
     defineField({
       name: 'stretchLength',
-      title: 'Oppløpslengde',
+      title: 'Oppløpslengde (meter)',
       type: 'number',
-      description: 'Meter',
+      group: 'basic',
     }),
 
     defineField({
       name: 'link',
       title: 'Lenke',
       type: 'url',
+      group: 'basic',
     }),
 
     defineField({
       name: 'image',
       title: 'Bilde',
       type: 'image',
+      group: 'basic',
       options: {hotspot: true},
     }),
   ],
@@ -100,15 +139,13 @@ export default defineType({
   preview: {
     select: {
       title: 'name',
-      subtitle: 'country',
-      media: 'image',
+      subtitle: 'postalPlace',
       abbreviation: 'abbreviation',
     },
-    prepare({title, subtitle, media, abbreviation}) {
+    prepare({title, subtitle, abbreviation}) {
       return {
         title,
         subtitle: [abbreviation, subtitle].filter(Boolean).join(' • '),
-        media,
       }
     },
   },
