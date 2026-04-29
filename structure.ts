@@ -127,7 +127,6 @@ export const structure = (S: StructureBuilder) =>
                 ),
 
               S.documentTypeListItem('supplier').title('Leverandør'),
-              S.documentTypeListItem('prisliste').title('Prisliste'),
               S.documentTypeListItem('invoice').title('Viderefakturering'),
               S.documentTypeListItem('kontraktmal').title('Kontraktsmaler'),
               S.documentTypeListItem('fillager').title('Fillager'),

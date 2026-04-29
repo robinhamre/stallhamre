@@ -1,189 +1,169 @@
+// schemaTypes/track.ts
 import {defineField, defineType} from 'sanity'
 
-const months = [
-  {title: 'Januar', value: '01'},
-  {title: 'Februar', value: '02'},
-  {title: 'Mars', value: '03'},
-  {title: 'April', value: '04'},
-  {title: 'Mai', value: '05'},
-  {title: 'Juni', value: '06'},
-  {title: 'Juli', value: '07'},
-  {title: 'August', value: '08'},
-  {title: 'September', value: '09'},
-  {title: 'Oktober', value: '10'},
-  {title: 'November', value: '11'},
-  {title: 'Desember', value: '12'},
-]
-
 export default defineType({
-  name: 'invoice',
-  title: 'Viderefakturering',
+  name: 'track',
+  title: 'Travbane',
   type: 'document',
 
   groups: [
     {name: 'basic', title: 'Grunnleggende', default: true},
-    {name: 'assignment', title: 'Hest / Eier'},
-    {name: 'amount', title: 'Beløp'},
+    {name: 'location', title: 'Adresse'},
+    {name: 'internal', title: 'Oppseling internt'},
   ],
 
   fields: [
-    // 🔹 Leverandør
     defineField({
-      name: 'supplier',
-      title: 'Leverandør',
-      type: 'reference',
-      to: [{type: 'supplier'}],
+      name: 'name',
+      title: 'Navn',
+      type: 'string',
       group: 'basic',
       validation: (Rule) => Rule.required(),
     }),
 
-    // 🔹 Type kostnad
     defineField({
-      name: 'costType',
-      title: 'Type kostnad',
-      type: 'string',
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
       group: 'basic',
       options: {
+        source: 'name',
+        maxLength: 96,
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+
+    defineField({
+      name: 'abbreviation',
+      title: 'Baneforkortelse',
+      type: 'string',
+      group: 'basic',
+      description: 'For eksempel B, J, M, F osv.',
+    }),
+
+    defineField({
+      name: 'address',
+      title: 'Adresse',
+      type: 'string',
+      group: 'location',
+    }),
+
+    defineField({
+      name: 'postalCode',
+      title: 'Postnummer',
+      type: 'string',
+      group: 'location',
+    }),
+
+    defineField({
+      name: 'postalPlace',
+      title: 'Poststed',
+      type: 'string',
+      group: 'location',
+    }),
+
+    defineField({
+      name: 'country',
+      title: 'Land',
+      type: 'string',
+      group: 'location',
+      options: {
         list: [
-          {title: 'Sko', value: 'shoeing'},
-          {title: 'Transport', value: 'transport'},
-          {title: 'Veterinær', value: 'vet'},
-          {title: 'Oppsitt', value: 'rider'},
-          {title: 'Kosttilskudd', value: 'supplement'},
+          {title: 'Norge', value: 'NO'},
+          {title: 'Sverige', value: 'SE'},
+          {title: 'Danmark', value: 'DK'},
+          {title: 'Finland', value: 'FI'},
+          {title: 'Frankrike', value: 'FR'},
+          {title: 'Andre', value: 'OTHER'},
+        ],
+        layout: 'dropdown',
+      },
+      initialValue: 'NO',
+    }),
+
+    defineField({
+      name: 'internalStartPrice',
+      title: 'Pris på oppseling',
+      type: 'number',
+      group: 'internal',
+      description: 'Brukes kun internt i systemet. Skal ikke vises på nettsiden.',
+    }),
+
+    defineField({
+      name: 'internalStartVatMode',
+      title: 'MVA på oppseling',
+      type: 'string',
+      group: 'internal',
+      options: {
+        list: [
+          {title: 'MVA', value: 'vat'},
+          {title: 'Fritatt mva', value: 'exempt'},
         ],
         layout: 'radio',
         direction: 'horizontal',
       },
-      validation: (Rule) => Rule.required(),
+      initialValue: 'vat',
     }),
 
-    // 🔹 År
     defineField({
-      name: 'year',
-      title: 'År',
+      name: 'trackLength',
+      title: 'Banelengde',
       type: 'number',
       group: 'basic',
-      validation: (Rule) => Rule.required(),
+      description: 'Meter, for eksempel 1000.',
     }),
 
-    // 🔹 Måned
     defineField({
-      name: 'month',
-      title: 'Periode',
-      type: 'string',
+      name: 'stretchLength',
+      title: 'Oppløpslengde',
+      type: 'number',
+      group: 'basic',
+      description: 'Meter.',
+    }),
+
+    defineField({
+      name: 'link',
+      title: 'Lenke',
+      type: 'url',
+      group: 'basic',
+    }),
+
+    defineField({
+      name: 'image',
+      title: 'Bilde',
+      type: 'image',
       group: 'basic',
       options: {
-        list: months,
-        layout: 'dropdown',
+        hotspot: true,
       },
-      validation: (Rule) => Rule.required(),
-    }),
-
-    // 🔹 Fakturainfo
-    defineField({
-      name: 'invoiceNumber',
-      title: 'Fakturanummer',
-      type: 'string',
-      group: 'basic',
-    }),
-
-    defineField({
-      name: 'invoiceDate',
-      title: 'Fakturadato',
-      type: 'date',
-      group: 'basic',
-    }),
-
-    // 🔥 HESTER (flere)
-    defineField({
-      name: 'horses',
-      title: 'Hester',
-      type: 'array',
-      group: 'assignment',
-      of: [
-        {
-          type: 'object',
-          name: 'horseSplit',
-          title: 'Hest',
-          fields: [
-            {
-              name: 'horse',
-              title: 'Hest',
-              type: 'reference',
-              to: [{type: 'horse'}],
-              validation: (Rule: any) => Rule.required(),
-            },
-            {
-              name: 'amount',
-              title: 'Beløp eks mva',
-              type: 'number',
-              description: 'Beløp for denne hesten',
-            },
-          ],
-          preview: {
-            select: {
-              title: 'horse.name',
-              amount: 'amount',
-            },
-            prepare({title, amount}: any) {
-              return {
-                title: title || 'Hest',
-                subtitle: amount ? `${amount} kr` : '',
-              }
-            },
-          },
-        },
-      ],
-    }),
-
-    // 🔹 Eier (fallback hvis ikke hest)
-    defineField({
-      name: 'owner',
-      title: 'Eier (hvis ikke hest)',
-      type: 'reference',
-      to: [{type: 'owner'}],
-      group: 'assignment',
-    }),
-
-    // 🔹 Totalbeløp
-    defineField({
-      name: 'totalAmount',
-      title: 'Totalt beløp eks mva',
-      type: 'number',
-      group: 'amount',
-      validation: (Rule) => Rule.required(),
-    }),
-
-    // 🔹 MVA toggle
-    defineField({
-      name: 'vatExempt',
-      title: 'Fritatt mva',
-      type: 'boolean',
-      group: 'amount',
-      initialValue: false,
     }),
   ],
 
   preview: {
     select: {
-      supplier: 'supplier.name',
-      costType: 'costType',
-      year: 'year',
-      month: 'month',
-      total: 'totalAmount',
+      title: 'name',
+      abbreviation: 'abbreviation',
+      postalPlace: 'postalPlace',
+      country: 'country',
+      media: 'image',
     },
-    prepare({supplier, costType, year, month, total}: any) {
-      const monthTitle = months.find((m) => m.value === month)?.title || month
-
+    prepare({
+      title,
+      abbreviation,
+      postalPlace,
+      country,
+      media,
+    }: {
+      title?: string
+      abbreviation?: string
+      postalPlace?: string
+      country?: string
+      media?: unknown
+    }) {
       return {
-        title: supplier || 'Viderefakturering',
-        subtitle: [
-          costType,
-          monthTitle && year ? `${monthTitle} ${year}` : '',
-          total ? `${total} kr` : '',
-        ]
-          .filter(Boolean)
-          .join(' • '),
+        title,
+        subtitle: [abbreviation, postalPlace, country].filter(Boolean).join(' • '),
+        media,
       }
     },
   },
