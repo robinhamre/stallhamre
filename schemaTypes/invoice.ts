@@ -1,43 +1,109 @@
-// schemaTypes/invoice.ts
 import {defineField, defineType} from 'sanity'
+
+const months = [
+  {title: 'Januar', value: '01'},
+  {title: 'Februar', value: '02'},
+  {title: 'Mars', value: '03'},
+  {title: 'April', value: '04'},
+  {title: 'Mai', value: '05'},
+  {title: 'Juni', value: '06'},
+  {title: 'Juli', value: '07'},
+  {title: 'August', value: '08'},
+  {title: 'September', value: '09'},
+  {title: 'Oktober', value: '10'},
+  {title: 'November', value: '11'},
+  {title: 'Desember', value: '12'},
+]
 
 export default defineType({
   name: 'invoice',
   title: 'Viderefakturering',
   type: 'document',
 
+  groups: [
+    {name: 'basic', title: 'Grunnleggende', default: true},
+    {name: 'period', title: 'Faktureringsperiode'},
+    {name: 'lines', title: 'Varelinjer'},
+    {name: 'attachments', title: 'Vedlegg'},
+    {name: 'notes', title: 'Notater / status'},
+  ],
+
   fields: [
-    // -------------------
-    // Hovedpunkter
-    // -------------------
+    defineField({
+      name: 'sourceType',
+      title: 'Type registrering',
+      type: 'string',
+      group: 'basic',
+      options: {
+        list: [
+          {title: 'Ekstern leverandørfaktura', value: 'supplierInvoice'},
+          {title: 'Manuell viderefakturering', value: 'manualCharge'},
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'supplierInvoice',
+      validation: (Rule) => Rule.required(),
+    }),
+
     defineField({
       name: 'supplier',
       title: 'Leverandør',
       type: 'reference',
+      group: 'basic',
       to: [{type: 'supplier'}],
-      validation: Rule => Rule.required(),
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const document = context.document as any
+          if (document?.sourceType === 'supplierInvoice' && !value) {
+            return 'Velg leverandør når dette er en ekstern leverandørfaktura.'
+          }
+          return true
+        }),
     }),
 
     defineField({
       name: 'invoiceNumber',
       title: 'Fakturanummer',
       type: 'string',
+      group: 'basic',
     }),
 
     defineField({
       name: 'invoiceDate',
       title: 'Fakturadato',
       type: 'date',
-      validation: Rule => Rule.required(),
+      group: 'basic',
+      validation: (Rule) => Rule.required(),
     }),
 
-    // -------------------
-    // Produkter / varelinjer
-    // -------------------
+    defineField({
+      name: 'billingYear',
+      title: 'Faktureres på år',
+      type: 'number',
+      group: 'period',
+      validation: (Rule) => Rule.required().min(2024).max(2100),
+      description: 'Hvilket år kostnaden skal inn på i viderefaktureringen.',
+    }),
+
+    defineField({
+      name: 'billingMonth',
+      title: 'Faktureres på måned',
+      type: 'string',
+      group: 'period',
+      options: {
+        list: months,
+        layout: 'dropdown',
+      },
+      validation: (Rule) => Rule.required(),
+      description: 'Hvilken måned kostnaden skal inn på i viderefaktureringen.',
+    }),
+
     defineField({
       name: 'lines',
-      title: 'Produkter / varelinjer',
+      title: 'Varelinjer',
       type: 'array',
+      group: 'lines',
+      validation: (Rule) => Rule.min(1).error('Legg til minst én varelinje.'),
       of: [
         {
           type: 'object',
@@ -45,10 +111,25 @@ export default defineType({
           title: 'Varelinje',
           fields: [
             defineField({
+              name: 'priceItem',
+              title: 'Prislinje',
+              type: 'reference',
+              to: [{type: 'prisliste'}],
+              description: 'Valgfritt. Velg fra prislisten hvis linjen matcher en standard vare/tjeneste.',
+            }),
+
+            defineField({
               name: 'serviceDate',
-              title: 'Dato for tjeneste (tekst)',
-              type: 'string',
-              description: 'Valgfritt (f.eks. "Uke 3" / "12.01.2026")',
+              title: 'Dato for tjeneste',
+              type: 'date',
+            }),
+
+            defineField({
+              name: 'track',
+              title: 'Travbane',
+              type: 'reference',
+              to: [{type: 'track'}],
+              description: 'Valgfritt. Praktisk for transport eller oppseling.',
             }),
 
             defineField({
@@ -56,20 +137,21 @@ export default defineType({
               title: 'Hest',
               type: 'reference',
               to: [{type: 'horse'}],
-              description: 'Velg hest hvis relevant',
+              description: 'Velg hest hvis kostnaden gjelder en bestemt hest.',
             }),
 
             defineField({
               name: 'owner',
-              title: 'Eier (hvis ikke hest er valgt)',
+              title: 'Eier',
               type: 'reference',
               to: [{type: 'owner'}],
-              description: 'Bruk dette dersom varelinjen ikke knyttes til en hest',
-              validation: Rule =>
+              description: 'Bruk dette hvis linjen skal knyttes direkte til eier, uten hest.',
+              validation: (Rule) =>
                 Rule.custom((value, context) => {
                   const parent = context.parent as any
-                  if (!parent?.horse && !value) return 'Velg eier hvis du ikke velger hest.'
-                  if (parent?.horse && value) return 'Fjern eier når hest er valgt (eier finnes via hesten).'
+                  if (!parent?.horse && !value) {
+                    return 'Velg enten hest eller eier.'
+                  }
                   return true
                 }),
             }),
@@ -78,55 +160,163 @@ export default defineType({
               name: 'description',
               title: 'Beskrivelse',
               type: 'string',
-              validation: Rule => Rule.required(),
+              validation: (Rule) => Rule.required(),
             }),
 
             defineField({
-              name: 'amountExVat',
-              title: 'Beløp eks mva',
+              name: 'quantity',
+              title: 'Antall',
               type: 'number',
+              initialValue: 1,
+              validation: (Rule) => Rule.min(0),
             }),
 
             defineField({
-              name: 'amountIncVat',
-              title: 'Beløp ink mva',
+              name: 'unitPriceExVat',
+              title: 'Pris per enhet eks mva',
               type: 'number',
-              description: 'Bruk kun hvis "Beløp eks mva" ikke er fylt ut',
+              validation: (Rule) => Rule.required(),
+            }),
+
+            defineField({
+              name: 'vatMode',
+              title: 'MVA-type',
+              type: 'string',
+              options: {
+                list: [
+                  {title: 'MVA fritatt', value: 'vatExempt'},
+                  {title: '25% mva', value: 'vat25'},
+                  {title: 'Uten mva', value: 'noVat'},
+                ],
+              },
+              initialValue: 'vat25',
+            }),
+
+            defineField({
+              name: 'includeOnCustomerInvoice',
+              title: 'Ta med på kundefaktura',
+              type: 'boolean',
+              initialValue: true,
+            }),
+
+            defineField({
+              name: 'notes',
+              title: 'Notat',
+              type: 'string',
             }),
           ],
 
-          // Validering på selve linje-objektet:
-          validation: Rule =>
-            Rule.custom((line: any) => {
-              if (!line) return true
+          preview: {
+            select: {
+              description: 'description',
+              horseName: 'horse.name',
+              ownerName: 'owner.name',
+              quantity: 'quantity',
+              unitPrice: 'unitPriceExVat',
+            },
+            prepare({
+              description,
+              horseName,
+              ownerName,
+              quantity,
+              unitPrice,
+            }: {
+              description?: string
+              horseName?: string
+              ownerName?: string
+              quantity?: number
+              unitPrice?: number
+            }) {
+              const total =
+                typeof quantity === 'number' && typeof unitPrice === 'number'
+                  ? quantity * unitPrice
+                  : undefined
 
-              const ex = line.amountExVat
-              const inc = line.amountIncVat
-
-              if ((ex === undefined || ex === null) && (inc === undefined || inc === null)) {
-                return 'Fyll ut enten "Beløp eks mva" eller "Beløp ink mva".'
+              return {
+                title: description || 'Varelinje',
+                subtitle: [
+                  horseName || ownerName,
+                  typeof total === 'number' ? `${total} kr eks mva` : '',
+                ]
+                  .filter(Boolean)
+                  .join(' • '),
               }
-              if ((ex !== undefined && ex !== null) && (inc !== undefined && inc !== null)) {
-                return 'Bruk kun ett beløpsfelt (enten eks mva eller ink mva).'
-              }
-              return true
-            }),
+            },
+          },
         },
       ],
-      validation: Rule => Rule.min(1).error('Legg til minst én varelinje.'),
+    }),
+
+    defineField({
+      name: 'supplierInvoicePdf',
+      title: 'Leverandørfaktura PDF',
+      type: 'file',
+      group: 'attachments',
+      options: {
+        accept: 'application/pdf',
+      },
+    }),
+
+    defineField({
+      name: 'status',
+      title: 'Status',
+      type: 'string',
+      group: 'notes',
+      options: {
+        list: [
+          {title: 'Registrert', value: 'registered'},
+          {title: 'Klar til fakturering', value: 'ready'},
+          {title: 'Ferdig viderefakturert', value: 'invoiced'},
+        ],
+      },
+      initialValue: 'registered',
+    }),
+
+    defineField({
+      name: 'notes',
+      title: 'Interne notater',
+      type: 'text',
+      group: 'notes',
+      rows: 5,
     }),
   ],
 
   preview: {
     select: {
       supplier: 'supplier.name',
-      date: 'invoiceDate',
-      number: 'invoiceNumber',
+      invoiceNumber: 'invoiceNumber',
+      invoiceDate: 'invoiceDate',
+      billingYear: 'billingYear',
+      billingMonth: 'billingMonth',
+      status: 'status',
     },
-    prepare({supplier, date, number}) {
-      const left = supplier || 'Viderefakturering'
-      const right = [number, date].filter(Boolean).join(' • ')
-      return {title: left, subtitle: right}
+    prepare({
+      supplier,
+      invoiceNumber,
+      invoiceDate,
+      billingYear,
+      billingMonth,
+      status,
+    }: {
+      supplier?: string
+      invoiceNumber?: string
+      invoiceDate?: string
+      billingYear?: number
+      billingMonth?: string
+      status?: string
+    }) {
+      const monthTitle = months.find((m) => m.value === billingMonth)?.title || billingMonth || ''
+      return {
+        title: supplier || 'Viderefakturering',
+        subtitle: [
+          invoiceNumber,
+          invoiceDate,
+          monthTitle && billingYear ? `${monthTitle} ${billingYear}` : '',
+          status,
+        ]
+          .filter(Boolean)
+          .join(' • '),
+      }
     },
   },
 })

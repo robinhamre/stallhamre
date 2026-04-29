@@ -25,6 +25,7 @@ import andelskjop from './andelskjop'
 import kontraktmal from './kontraktmal'
 import fillager from './fillager'
 import lonnsliste from './lonnsliste'
+import prisliste from './prisliste'
 
 export const schemaTypes = [
   category,
@@ -54,4 +55,5 @@ export const schemaTypes = [
   kontraktmal,
   fillager,
   lonnsliste,
+  prisliste,
 ]

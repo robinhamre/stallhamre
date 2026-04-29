@@ -109,7 +109,9 @@ export const structure = (S: StructureBuilder) =>
                             .title(`Alle lønnslister (${CURRENT_YEAR})`)
                             .filter('_type == "lonnsliste" && year == $year')
                             .params({year: CURRENT_YEAR})
-                            .defaultOrdering([{field: 'month', direction: 'desc'}])
+                            .defaultOrdering([
+                              {field: 'month', direction: 'desc'},
+                            ])
                         ),
 
                       S.listItem()
@@ -125,6 +127,7 @@ export const structure = (S: StructureBuilder) =>
                 ),
 
               S.documentTypeListItem('supplier').title('Leverandør'),
+              S.documentTypeListItem('prisliste').title('Prisliste'),
               S.documentTypeListItem('invoice').title('Viderefakturering'),
               S.documentTypeListItem('kontraktmal').title('Kontraktsmaler'),
               S.documentTypeListItem('fillager').title('Fillager'),
@@ -152,7 +155,9 @@ export const structure = (S: StructureBuilder) =>
         .child(
           S.list()
             .title('Media')
-            .items([S.documentTypeListItem('imageLibrary').title('Bildebank')])
+            .items([
+              S.documentTypeListItem('imageLibrary').title('Bildebank'),
+            ])
         ),
 
       S.listItem()
@@ -160,6 +165,8 @@ export const structure = (S: StructureBuilder) =>
         .child(
           S.list()
             .title('Historikk')
-            .items([S.documentTypeListItem('yearStatsHistoric').title('År-historisk')])
+            .items([
+              S.documentTypeListItem('yearStatsHistoric').title('År-historisk'),
+            ])
         ),
     ])
