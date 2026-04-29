@@ -14,7 +14,6 @@ export default defineType({
       validation: Rule => Rule.required(),
     }),
 
-    // ✅ SLUG – brukes til egne banesider
     defineField({
       name: 'slug',
       title: 'Slug',
@@ -24,6 +23,31 @@ export default defineType({
         maxLength: 96,
       },
       validation: Rule => Rule.required(),
+    }),
+
+    defineField({
+      name: 'abbreviation',
+      title: 'Baneforkortelse',
+      type: 'string',
+      description: 'For eksempel B for Bjerke, J for Jarlsberg osv.',
+    }),
+
+    defineField({
+      name: 'address',
+      title: 'Adresse',
+      type: 'string',
+    }),
+
+    defineField({
+      name: 'postalCode',
+      title: 'Postnummer',
+      type: 'string',
+    }),
+
+    defineField({
+      name: 'postalPlace',
+      title: 'Poststed',
+      type: 'string',
     }),
 
     defineField({
@@ -78,6 +102,14 @@ export default defineType({
       title: 'name',
       subtitle: 'country',
       media: 'image',
+      abbreviation: 'abbreviation',
+    },
+    prepare({title, subtitle, media, abbreviation}) {
+      return {
+        title,
+        subtitle: [abbreviation, subtitle].filter(Boolean).join(' • '),
+        media,
+      }
     },
   },
 })
